@@ -1,0 +1,9 @@
+programy:
+sap 
+elliteq 
+platforma 
+proton 
+sop
+cop
+
+technolog dyski
