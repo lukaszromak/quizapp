@@ -1,4 +1,8 @@
+import { useState, useEffect } from "react"
+
 function PathDetails() {
+
+
     return (
         <></>
     )

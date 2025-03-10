@@ -20,6 +20,7 @@ import ProfileNavigation from 'components/Profile/ProfileNavigation';
 import SolvedQuizesDashboard from 'components/Profile/SolvedQuizesDashboard';
 import PathCreate from 'components/Path/PathCreate';
 import PathDetails from 'components/Path/PathDetails';
+import PathList from 'components/Path/PathList';
 
 export default function App() {
   // init custom history object to allow navigation from 
@@ -47,6 +48,7 @@ export default function App() {
         <Route path='/user/changePassword' element={<ChangePassword/>}></Route>
         <Route path='/user/solvedQuizzes' element={<SolvedQuizesDashboard/>}></Route>
         <Route path='/teacher/createPath' element={<PathCreate/>}></Route>
+        <Route path='/pathList' element={<PathList/>}></Route>
       </Routes>
     </>
   )

@@ -20,8 +20,11 @@ public class Path {
     @OneToMany
     private List<User> students;
 
-    @OneToMany
-    @JoinColumn(name = "quiz_id")
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(
+            joinColumns = { @JoinColumn(name = "path_id") },
+            inverseJoinColumns = { @JoinColumn(name = "quiz_id") }
+    )
     private List<Quiz> quizzes;
 
     @OneToMany

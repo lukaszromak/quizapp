@@ -1,5 +1,8 @@
 package com.lukasz.quizapp.entities;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -72,4 +75,5 @@ public class Quiz {
             inverseJoinColumns = { @JoinColumn(name = "quiz_category_id") }
     )
     private Set<QuizCategory> categories;
+
 }

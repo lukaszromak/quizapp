@@ -2,9 +2,11 @@ package com.lukasz.quizapp.controllers;
 
 import com.lukasz.quizapp.dto.QuizDto;
 import com.lukasz.quizapp.dto.SolveDto;
+import com.lukasz.quizapp.entities.Path;
 import com.lukasz.quizapp.entities.Quiz;
 import com.lukasz.quizapp.entities.Solve;
 import com.lukasz.quizapp.services.AuthService;
+import com.lukasz.quizapp.services.PathService;
 import com.lukasz.quizapp.services.QuizService;
 import com.lukasz.quizapp.services.SolveService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +24,24 @@ public class UserController {
     private QuizService quizService;
     private AuthService authService;
     private SolveService solveService;
+    private PathService pathService;
 
     @Autowired
-    public UserController(QuizService quizService, AuthService authService, SolveService solveService) {
+    public UserController(QuizService quizService, AuthService authService, SolveService solveService, PathService pathService) {
         this.quizService = quizService;
         this.authService = authService;
         this.solveService = solveService;
+        this.pathService = pathService;
     }
 
     @GetMapping("/quizzes")
     public List<Quiz> getQuizzes() {
         return quizService.read(authService.getAuthenticatedUser());
+    }
+
+    @GetMapping("/paths")
+    public List<Path> getPaths() {
+        return pathService.read(authService.getAuthenticatedUser());
     }
 
     @GetMapping("/{userId}/solves")
