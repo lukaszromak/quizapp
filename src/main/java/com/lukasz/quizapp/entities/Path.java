@@ -17,7 +17,13 @@ public class Path {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToMany
+    private String name;
+
+    @ManyToMany
+    @JoinTable(
+            joinColumns = { @JoinColumn(name = "path_id") },
+            inverseJoinColumns = { @JoinColumn(name = "user_id") }
+    )
     private List<User> students;
 
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
@@ -27,6 +33,7 @@ public class Path {
     )
     private List<Quiz> quizzes;
 
-    @OneToMany
-    private List<User> teachers;
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private User teacher;
 }

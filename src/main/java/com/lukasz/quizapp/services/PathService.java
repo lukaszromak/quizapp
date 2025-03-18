@@ -1,15 +1,20 @@
 package com.lukasz.quizapp.services;
 
+import com.lukasz.quizapp.dto.PathDto;
+import com.lukasz.quizapp.dto.QuizDto;
+import com.lukasz.quizapp.dto.game.UserDto;
 import com.lukasz.quizapp.entities.Path;
 import com.lukasz.quizapp.entities.Quiz;
 import com.lukasz.quizapp.entities.User;
 import com.lukasz.quizapp.exception.PathNotFoundException;
 import com.lukasz.quizapp.repositories.PathRepository;
 import com.lukasz.quizapp.repositories.QuizRepository;
+import com.lukasz.quizapp.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,13 +24,16 @@ import java.util.stream.StreamSupport;
 public class PathService {
 
     private final PathRepository pathRepository;
-
     private final QuizRepository quizRepository;
+    private final UserRepository userRepository;
+    private final AuthService authService;
 
     @Autowired
-    public PathService(PathRepository pathRepository, QuizRepository quizRepository) {
+    public PathService(PathRepository pathRepository, QuizRepository quizRepository, UserRepository userRepository, AuthService authService) {
         this.pathRepository = pathRepository;
         this.quizRepository = quizRepository;
+        this.userRepository = userRepository;
+        this.authService = authService;
     }
 
     public Path read(Long id) throws PathNotFoundException {
@@ -39,7 +47,7 @@ public class PathService {
     }
 
     public List<Path> read(User user) {
-        return pathRepository.findAllByTeachers(user);
+        return pathRepository.findAllByTeacher(user);
     }
 
     @Transactional
@@ -53,7 +61,56 @@ public class PathService {
 
         path.setQuizzes(quizList);
 
+        path.setTeacher(authService.getAuthenticatedUser());
+
+        if(path.getStudents() != null) {
+            List<User> studentsList = userRepository.findAllById(path.getStudents().stream().map(student -> student.getId()).collect(Collectors.toList()));
+            path.setStudents(studentsList);
+        }
+
         return pathRepository.save(path);
     }
 
+    @Transactional
+    public Path update(PathDto pathDto) {
+        Path path = pathRepository.findById(pathDto.getId())
+                .orElseThrow(() -> new RuntimeException("Path not found"));
+
+        if (pathDto.getName() != null) {
+            path.setName(pathDto.getName());
+        }
+
+        if (pathDto.getStudents() != null) {
+            List<Long> studentIds = pathDto.getStudents().stream()
+                    .map(UserDto::getId)
+                    .collect(Collectors.toList());
+            List<User> students = userRepository.findAllById(studentIds);
+            if (students.size() != studentIds.size()) {
+                throw new RuntimeException("Some students not found");
+            }
+            path.setStudents(students);
+        }
+
+        if (pathDto.getQuizzes() != null) {
+            List<Long> quizIds = pathDto.getQuizzes().stream()
+                    .map(QuizDto::getId)
+                    .collect(Collectors.toList());
+            List<Quiz> quizzes = StreamSupport.stream(quizRepository.findAllById(quizIds).spliterator(), false)
+                    .collect(Collectors.toList());
+            if (quizzes.size() != quizIds.size()) {
+                throw new RuntimeException("Some quizzes not found");
+            }
+            path.setQuizzes(quizzes);
+        }
+
+        return pathRepository.save(path);
+    }
+
+    public static List<PathDto> mapPathsListToPathDtoList(List<Path> pathList) {
+        return pathList.stream().map(path -> new PathDto(path.getId(), path.getName(), null, null)).collect(Collectors.toList());
+    }
+
+    public static PathDto mapPathToPathDto(Path path) {
+        return new PathDto(path.getId(), path.getName(), path.getStudents().stream().map(student -> new UserDto(student.getId(), student.getUsername())).collect(Collectors.toList()), path.getQuizzes().stream().map(quiz -> new QuizDto(quiz.getId(), quiz.getTitle(), null, null)).collect(Collectors.toList()));
+    }
 }

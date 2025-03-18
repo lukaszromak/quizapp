@@ -1,2 +1,19 @@
 RUN THE DB CONTAINER
 docker run --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_USER=quizapp -d -p 5432:5432 postgres
+
+bez obiektu assignment
+- nauczyciel hostuje quiz po prostu i dolaczaja typy
+- jak potem umozliwic komus zrobienie tego? -> system moze wyszukiwac w ramach sciezki quizow czy bylo rozwiazanie danego quizu
+- nie mozna ustawic sobie zeby quiz byl dostepny od czasu X
+- wszystkie quizy publiczne od razu czy co?
+- jak grupowac rozwiazania?
+
+rozwiazania grupowane w ten sposob ze jest sobie quiz (po udostepnieniu) i ludzie rozwiazuja ten quiz??
+
+czyli moze w ten sposób:
+Klasa zawiera quizy które trzeba opublikować w ramach niej, w publikacji określamy czy interaktywny czy nie, publikacja to po prostu przypisanie
+jezeli interaktywny nauczyciel musi go zhostowac i podac kod, jezeli nie po prostu ludzie rozwiazuja
+
+TWORZENIE ASIGNMENT NA PODSTAWIE QUIZU
+OD KIEDY DOSTEPNY DLA UCZNIOW
+DO KIEDY DOSTEPNY DLA UCZNIOW

@@ -44,6 +44,21 @@ public class UserService {
         return user;
     }
 
+    public User readByEmail(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+
+        if(optionalUser.isEmpty()) {
+            throw new RuntimeException("User not found.");
+        }
+
+        User user = optionalUser.get();
+
+        return user;
+    }
+
+    public boolean existsById(Long id) {
+        return userRepository.existsById(id);
+    }
 
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
