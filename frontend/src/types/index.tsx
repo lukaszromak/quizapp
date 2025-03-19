@@ -78,11 +78,23 @@ interface Solve {
     wasGame: boolean
 }
 
+interface Student {
+    id?: number,
+    username?: string
+}
+
 interface Path {
     id: number | null,
-    students: Array<string>,
+    name: string,
+    students: Array<Student>,
     quizzes: Array<Quiz>,
     teachers: Array<string>
+}
+
+interface doExistResponse {
+    id?: number,
+    username?: number,
+    exists: boolean
 }
 
 export {
@@ -98,5 +110,7 @@ export type {
     GameEvent,
     Game,
     Solve,
-    Path
+    Path,
+    doExistResponse,
+    Student
 }

@@ -49,6 +49,7 @@ export default function App() {
         <Route path='/user/solvedQuizzes' element={<SolvedQuizesDashboard/>}></Route>
         <Route path='/teacher/createPath' element={<PathCreate/>}></Route>
         <Route path='/pathList' element={<PathList/>}></Route>
+        <Route path='/path/details/:id' element={<PathDetails/>}></Route>
       </Routes>
     </>
   )

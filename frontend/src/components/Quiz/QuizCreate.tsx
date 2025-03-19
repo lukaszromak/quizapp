@@ -7,6 +7,7 @@ import { reset, create, setTitle, readFromLocalStorage, addQuestion, deleteQuest
 import { fetchQuizCategory } from "features/quizCategorySlice";
 import Button from "components/Misc/Button";
 import ErrorMessage from "components/Misc/ErrorMessage";
+import { genericListItemStyle, genericTextInputStyle } from "components/Misc/Styles";
 
 const categoriesColors = [
   'bg-violet-700',
@@ -128,7 +129,7 @@ function CreateQuiz() {
                     type="checkbox"
                     onChange={(e) => dispatch(markAnswerAsCorrect({ checked: e.currentTarget.checked, qidx: qidx, aidx: idx }))}
                     checked={quiz.questions[qidx].answers[idx].isValid} />
-                  <input className="w-max rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md"
+                  <input className={genericTextInputStyle}
                     type="text"
                     value={quiz.questions[qidx].answers[idx].content}
                     onInput={(e) => dispatch(handleAnswerInput({ content: e.currentTarget.value, qidx: qidx, aidx: idx }))}
@@ -146,14 +147,14 @@ function CreateQuiz() {
             <label className="mb-1 border border-1 p-2 hover:cursor-pointer bg-green-500 hover:bg-green-700 text-white font-semibold text-white py-2 px-4 border border-green-700 hover:border-transparent rounded" htmlFor={`file-${qidx}`}>Add image (optional)</label>
             {quiz.questions[qidx].imageBase64 && <Button onClick={() => dispatch(clearQuestionImage(qidx))} color="red" style="mb-2">Delete image</Button>}
             {quiz.questions[qidx].imageBase64 && <img className="mb-4 rounded" src={quiz.questions[qidx].imageBase64} />}
-            <input className="w-max rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md mb-2 hidden"
+            <input className={`${genericTextInputStyle} mb-2 hidden`}
               id={`file-${qidx}`}
               type="file"
               onInput={(e) => dispatch(handleQuestionImageInput({ idx: qidx, files: e.currentTarget.files }))} />
           </div>
           <div className="mt-5 mb-2">
             <label className="block mb-1" htmlFor={`time-to-answer-${qidx}`}>Time to answer (optional)</label>
-            <input className="w-max rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md mb-2"
+            <input className={`${genericTextInputStyle} mb-2`}
               id={`time-to-answer-${qidx}`}
               type="number"
               onChange={(e) => dispatch(handleTimeToAnswerInput({ qidx: qidx, time: e.currentTarget.value }))}
