@@ -71,7 +71,6 @@ public class PathService {
         return pathRepository.save(path);
     }
 
-    @Transactional
     public Path update(PathDto pathDto) {
         Path path = pathRepository.findById(pathDto.getId())
                 .orElseThrow(() -> new RuntimeException("Path not found"));

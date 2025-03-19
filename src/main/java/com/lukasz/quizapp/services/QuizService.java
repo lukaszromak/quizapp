@@ -1,10 +1,7 @@
 package com.lukasz.quizapp.services;
 
 import com.lukasz.quizapp.dto.QuizSearch;
-import com.lukasz.quizapp.entities.Answer;
-import com.lukasz.quizapp.entities.Question;
-import com.lukasz.quizapp.entities.Quiz;
-import com.lukasz.quizapp.entities.User;
+import com.lukasz.quizapp.entities.*;
 import com.lukasz.quizapp.dto.AnswerDto;
 import com.lukasz.quizapp.dto.QuestionDto;
 import com.lukasz.quizapp.dto.QuizDto;

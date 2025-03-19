@@ -5,9 +5,14 @@ import com.lukasz.quizapp.entities.Path;
 import com.lukasz.quizapp.entities.Quiz;
 import com.lukasz.quizapp.exception.PathNotFoundException;
 import com.lukasz.quizapp.services.PathService;
+import com.lukasz.quizapp.services.QuizService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.lukasz.quizapp.services.PathService.mapPathToPathDto;
 
@@ -17,9 +22,12 @@ public class PathController {
 
     private final PathService pathService;
 
+    private final QuizService quizService;
+
     @Autowired
-    public PathController(PathService pathService) {
+    public PathController(PathService pathService, QuizService quizService) {
         this.pathService = pathService;
+        this.quizService = quizService;
     }
 
     @GetMapping("/{id}")
@@ -44,17 +52,16 @@ public class PathController {
 
     @PutMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
-    public Path updatePath(@RequestBody PathDto pathDto) {
-        Path updatedPath = pathService.update(pathDto);
+    @Transactional
+    public PathDto updatePath(@RequestBody PathDto pathDto) {
+        return mapPathToPathDto(pathService.update(pathDto));
+    }
 
-        for(Quiz quiz : updatedPath.getQuizzes())
-        {
-            quiz.setQuestions(null);
-            quiz.setCategories(null);
-            updatedPath.setStudents(null);
-        }
+    @GetMapping("/{id}/quizzes")
+    public ResponseEntity<List<Quiz>> getQuizzes(@PathVariable Long id) throws PathNotFoundException {
+        Path path = pathService.read(id);
 
-        return updatedPath;
+        return ResponseEntity.ok(path.getQuizzes());
     }
 
 }

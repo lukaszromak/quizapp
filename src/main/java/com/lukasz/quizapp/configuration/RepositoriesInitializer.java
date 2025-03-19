@@ -3,6 +3,7 @@ package com.lukasz.quizapp.configuration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lukasz.quizapp.entities.*;
 import com.lukasz.quizapp.repositories.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -11,9 +12,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.StreamSupport;
+
 
 @Configuration
 public class RepositoriesInitializer {
@@ -29,6 +31,9 @@ public class RepositoriesInitializer {
 
     @Autowired
     SolveRepository solveRepository;
+
+    @Autowired
+    PathRepository pathRepository;
 
     @Autowired
     QuizCategoryRepository quizCategoryRepository;
@@ -163,7 +168,20 @@ public class RepositoriesInitializer {
     }
 
     @Bean
-    InitializingBean init(List<User> users, List<Role> roles, List<Quiz> quizzes, List<QuizCategory> categories) {
+    List<Path> paths() {
+        List<Path> paths = new ArrayList<>();
+
+        for(int i = 0; i < 3; i++)
+        {
+            paths.add(new Path(null, String.format("path%d", i), null, null, null));
+        }
+
+        return paths;
+    }
+
+    @Bean
+    @Transactional
+    InitializingBean init(List<User> users, List<Role> roles, List<Quiz> quizzes, List<QuizCategory> categories, List<Path> paths) {
         return () -> {
             if(roleRepository.findAll().isEmpty()) {
                 roleRepository.saveAll(roles);
@@ -208,6 +226,19 @@ public class RepositoriesInitializer {
                 }
 
                 solveRepository.saveAll(solves);
+            }
+            if(!pathRepository.findAll().iterator().hasNext()) {
+                List<Path> pathList = StreamSupport.stream(pathRepository.saveAll(paths).spliterator(), false).toList();
+                List<Quiz> qzs = quizRepository.findAll();
+
+                for(int i = 0; i < 3; i++)
+                {
+                    pathList.get(i).setQuizzes(qzs);
+                    pathList.get(i).setStudents(users.subList(3, 10));
+                    pathList.get(i).setTeacher(users.get(1));
+                }
+
+                pathRepository.saveAll(pathList);
             }
         };
     }

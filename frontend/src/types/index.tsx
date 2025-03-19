@@ -97,6 +97,15 @@ interface doExistResponse {
     exists: boolean
 }
 
+interface Assignment {
+    id: number | null,
+    pathId: number,
+    quizId: number,
+    startDate: Date,
+    expirationDate: Date,
+    isSynchronous: boolean
+}
+
 export {
     GameEventType
 }
@@ -112,5 +121,6 @@ export type {
     Solve,
     Path,
     doExistResponse,
-    Student
+    Student,
+    Assignment
 }

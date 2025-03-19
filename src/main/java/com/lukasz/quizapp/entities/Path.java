@@ -1,6 +1,7 @@
 package com.lukasz.quizapp.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,9 +9,24 @@ import lombok.Setter;
 import java.util.List;
 
 @Entity
+@Table(name = "paths")
+@NamedEntityGraph(
+        name = "path-entity-graph",
+        attributeNodes = {
+                @NamedAttributeNode(value = "students"),
+                @NamedAttributeNode(value = "quizzes", subgraph = "quizzes-subgraph")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "quizzes-subgraph",
+                        attributeNodes = @NamedAttributeNode("questions")
+                )
+        }
+)
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Path {
 
     @Id

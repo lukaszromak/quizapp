@@ -12,7 +12,6 @@ import QuizSolve from 'components/Quiz/QuizSolve';
 import QuizResults from 'components/Quiz/QuizResults';
 import UserQuizzes from 'components/Profile/UserQuizzes';
 import QuizList from 'components/Quiz/QuizList';
-import Home from 'components/Home';
 import HostPanel from 'components/Game/HostPanel';
 import PlayerPanel from 'components/Game/PlayerPanel';
 import ChangePassword from 'components/Profile/ChangePassword';
@@ -21,6 +20,7 @@ import SolvedQuizesDashboard from 'components/Profile/SolvedQuizesDashboard';
 import PathCreate from 'components/Path/PathCreate';
 import PathDetails from 'components/Path/PathDetails';
 import PathList from 'components/Path/PathList';
+import AssignmentCreate from 'components/Assignment/AssignmentCreate';
 
 export default function App() {
   // init custom history object to allow navigation from 
@@ -50,6 +50,7 @@ export default function App() {
         <Route path='/teacher/createPath' element={<PathCreate/>}></Route>
         <Route path='/pathList' element={<PathList/>}></Route>
         <Route path='/path/details/:id' element={<PathDetails/>}></Route>
+        <Route path='/teacher/createAssignment' element={<AssignmentCreate></AssignmentCreate>}></Route>
       </Routes>
     </>
   )

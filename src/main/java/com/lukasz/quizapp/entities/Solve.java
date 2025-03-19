@@ -25,9 +25,9 @@ public class Solve {
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "path_id")
-    private Path path;
+    @ManyToOne
+    @JoinColumn(name = "assignment_id")
+    private Assignment assignment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

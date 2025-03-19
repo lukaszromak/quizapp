@@ -33,7 +33,10 @@ function AddStudent(props: AddStudentProps) {
       const response = await axiosPrivate.get(`/user/exists?searchString=${studentText}`, { withCredentials: true })
       if (response.data.exists === true) {
         if ("setPath" in props) {
+          const path = props.path
+          path.students = [...path.students, {id: response.data.id, username: response.data.username}]
           const updated = await axiosPrivate.put(`/path`, props.path, { withCredentials: true })
+          console.log(updated)
           props.setPath(updated.data)
         }
 

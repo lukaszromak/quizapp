@@ -1,12 +1,12 @@
 import ErrorMessage from "components/Misc/ErrorMessage"
-import { Typography } from "components/Misc/Typography"
 import { axiosPrivate } from "misc/utils"
 import { useState, useEffect } from "react"
-import { useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 
 import { Path } from "types"
-import { genericListItemStyle } from "components/Misc/Styles"
 import AddStudent from "./AddStudent"
+import { Typography } from "components/Misc/Typography"
+import { genericListItemStyle } from "components/Misc/Styles"
 
 function PathDetails() {
   const [path, setPath] = useState<Path | null>(null)
@@ -33,11 +33,14 @@ function PathDetails() {
       :
       (path !== null && error === "") &&
       <div className="mx-auto max-w-7xl px-4 py-8">
-        <Typography variant="h3">Students in class</Typography>
-        {path.students.map((student) => (
-          <div className={genericListItemStyle}>{student.username}</div>
-        ))}
         <AddStudent path={path} setPath={setPath}></AddStudent>
+        <Typography variant="h3">Quizzes</Typography>
+        {path.quizzes.map(quiz => (
+          <div className={genericListItemStyle}>
+            {quiz.title}
+            <Link to="/teacher/createAssignment" state={{quizId: quiz.id, pathId: path.id}}>Create assignment</Link>
+          </div>
+        ))}
       </div>
   )
 }
