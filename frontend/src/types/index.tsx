@@ -88,7 +88,8 @@ interface Path {
     name: string,
     students: Array<Student>,
     quizzes: Array<Quiz>,
-    teachers: Array<string>
+    teachers: Array<string>,
+    assignments: Array<Assignment>
 }
 
 interface doExistResponse {
@@ -99,6 +100,7 @@ interface doExistResponse {
 
 interface Assignment {
     id: number | null,
+    name: string
     pathId: number,
     quizId: number,
     startDate: Date,

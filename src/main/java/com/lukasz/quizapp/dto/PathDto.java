@@ -24,5 +24,5 @@ public class PathDto {
 
     private List<QuizDto> quizzes;
 
-
+    private List<AssignmentDto> assignments;
 }

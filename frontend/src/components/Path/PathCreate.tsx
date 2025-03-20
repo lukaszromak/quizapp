@@ -20,9 +20,7 @@ function PathCreate() {
   const [selectedQuizes, setSelectedQuizes] = useState<Array<Quiz>>([])
   const [searchByTitle, setSearchByTitle] = useState("")
   const [studentsList, setStudentsList] = useState<Student[]>([])
-  const [studentText, setStudentText] = useState("")
   const [submitError, setSubmitError] = useState("")
-  const [addUserError, setAddUserError] = useState("")
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
@@ -116,7 +114,8 @@ function PathCreate() {
       name: name,
       students: studentsList.map((student) => ({ id: student.id})),
       quizzes: selectedQuizes,
-      teachers: []
+      teachers: [],
+      assignments: []
     }
     setSubmitError("")
 

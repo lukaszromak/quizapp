@@ -14,7 +14,8 @@ import java.util.List;
         name = "path-entity-graph",
         attributeNodes = {
                 @NamedAttributeNode(value = "students"),
-                @NamedAttributeNode(value = "quizzes", subgraph = "quizzes-subgraph")
+                @NamedAttributeNode(value = "quizzes", subgraph = "quizzes-subgraph"),
+                @NamedAttributeNode(value = "assignments")
         },
         subgraphs = {
                 @NamedSubgraph(
@@ -48,6 +49,11 @@ public class Path {
             inverseJoinColumns = { @JoinColumn(name = "quiz_id") }
     )
     private List<Quiz> quizzes;
+
+    @OneToMany(
+            mappedBy = "path"
+    )
+    private List<Assignment> assignments;
 
     @ManyToOne
     @JoinColumn(name = "teacher_id")

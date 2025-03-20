@@ -21,6 +21,8 @@ public class Assignment {
     @GeneratedValue
     private Long id;
 
+    private String name;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "path_id")
     private Path path;

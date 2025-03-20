@@ -173,7 +173,7 @@ public class RepositoriesInitializer {
 
         for(int i = 0; i < 3; i++)
         {
-            paths.add(new Path(null, String.format("path%d", i), null, null, null));
+            paths.add(new Path(null, String.format("path%d", i), null, null,null, null));
         }
 
         return paths;

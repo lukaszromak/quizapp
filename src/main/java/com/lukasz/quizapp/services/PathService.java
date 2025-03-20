@@ -1,8 +1,10 @@
 package com.lukasz.quizapp.services;
 
+import com.lukasz.quizapp.dto.AssignmentDto;
 import com.lukasz.quizapp.dto.PathDto;
 import com.lukasz.quizapp.dto.QuizDto;
 import com.lukasz.quizapp.dto.game.UserDto;
+import com.lukasz.quizapp.entities.Assignment;
 import com.lukasz.quizapp.entities.Path;
 import com.lukasz.quizapp.entities.Quiz;
 import com.lukasz.quizapp.entities.User;
@@ -19,6 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static com.lukasz.quizapp.services.AssignmentService.mapAssignmentToAssignmentDto;
 
 @Service
 public class PathService {
@@ -106,10 +110,15 @@ public class PathService {
     }
 
     public static List<PathDto> mapPathsListToPathDtoList(List<Path> pathList) {
-        return pathList.stream().map(path -> new PathDto(path.getId(), path.getName(), null, null)).collect(Collectors.toList());
+        return pathList.stream().map(path -> new PathDto(path.getId(), path.getName(), null, null, null)).collect(Collectors.toList());
     }
 
     public static PathDto mapPathToPathDto(Path path) {
-        return new PathDto(path.getId(), path.getName(), path.getStudents().stream().map(student -> new UserDto(student.getId(), student.getUsername())).collect(Collectors.toList()), path.getQuizzes().stream().map(quiz -> new QuizDto(quiz.getId(), quiz.getTitle(), null, null)).collect(Collectors.toList()));
+        return new PathDto(
+                path.getId(),
+                path.getName(),
+                path.getStudents().stream().map(student -> new UserDto(student.getId(), student.getUsername())).collect(Collectors.toList()),
+                path.getQuizzes().stream().map(quiz -> new QuizDto(quiz.getId(), quiz.getTitle(), null, null)).collect(Collectors.toList()),
+                path.getAssignments().stream().map(assignment -> mapAssignmentToAssignmentDto(assignment)).collect(Collectors.toList()));
     }
 }
