@@ -15,6 +15,7 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -206,6 +207,15 @@ public class QuizService {
         answer.setIsValid(answerDto.getIsValid());
 
         return answer;
+    }
+
+    public static QuizDto mapQuizToQuizDto(Quiz quiz) {
+        QuizDto quizDto = new QuizDto();
+        quizDto.setTitle(quiz.getTitle());
+        quizDto.setQuestions(new ArrayList<>());
+        quizDto.setCategories(quiz.getCategories());
+
+        return quizDto;
     }
 
     private boolean hasOneValidAnswer(QuestionDto questionDto) {

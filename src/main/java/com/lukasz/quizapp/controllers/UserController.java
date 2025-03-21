@@ -1,7 +1,6 @@
 package com.lukasz.quizapp.controllers;
 
 import com.lukasz.quizapp.dto.PathDto;
-import com.lukasz.quizapp.dto.QuizDto;
 import com.lukasz.quizapp.dto.SolveDto;
 import com.lukasz.quizapp.dto.doExistResponse;
 import com.lukasz.quizapp.entities.Path;
@@ -13,11 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.lukasz.quizapp.services.PathService.mapPathsListToPathDtoList;
+import static com.lukasz.quizapp.services.SolveService.mapSolveListToSolveDtoList;
 
 @RestController
 @RequestMapping("/user")
@@ -53,7 +51,7 @@ public class UserController {
     public List<SolveDto> getSolves(@PathVariable Long userId) {
         List<Solve> solves = solveService.read(userId);
 
-        return mapSolveToSolveDto(solves);
+        return mapSolveListToSolveDtoList(solves);
     }
 
     @GetMapping("/exists")
@@ -86,18 +84,5 @@ public class UserController {
        }
 
        return new doExistResponse(null, null, false);
-    }
-
-    private List<SolveDto> mapSolveToSolveDto(List<Solve> solves) {
-        return solves.stream().map((solve -> new SolveDto(solve.getId(), mapQuizToQuizDto(solve.getQuiz()), solve.getId(), solve.getCorrectAnswers(), solve.getTotalAnswers(), solve.isWasGame()))).toList();
-    }
-
-    private QuizDto mapQuizToQuizDto(Quiz quiz) {
-        QuizDto quizDto = new QuizDto();
-        quizDto.setTitle(quiz.getTitle());
-        quizDto.setQuestions(new ArrayList<>());
-        quizDto.setCategories(quiz.getCategories());
-
-        return quizDto;
     }
 }

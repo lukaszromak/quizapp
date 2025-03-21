@@ -1,5 +1,6 @@
 package com.lukasz.quizapp.dto.game;
 
+import com.lukasz.quizapp.entities.Assignment;
 import com.lukasz.quizapp.entities.Quiz;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +24,8 @@ public class Game {
 
     private Quiz quiz;
 
+    private Long assignmentId;
+
     private int currentQuestion;
 
     private Long currentQuestionStartedAt;
@@ -33,11 +36,12 @@ public class Game {
 
     private boolean started;
 
-    public Game(String gameCode, String hostUsername, String answerTopic, Quiz quiz) {
+    public Game(String gameCode, String hostUsername, String answerTopic, Quiz quiz, Long assignmentId) {
         this.gameCode = gameCode;
         this.hostUsername = hostUsername;
         this.answerTopic = answerTopic;
         this.quiz = quiz;
+        this.assignmentId = assignmentId;
         this.currentQuestion = 0;
         this.scores = new ConcurrentHashMap<>();
         this.answeredCurrentQuestion = new ArrayList<>();

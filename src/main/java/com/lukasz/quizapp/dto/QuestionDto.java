@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,8 +17,6 @@ public class QuestionDto {
 
     @NotBlank
     private String question;
-
-    private Quiz quiz;
 
     private List<AnswerDto> answers;
 

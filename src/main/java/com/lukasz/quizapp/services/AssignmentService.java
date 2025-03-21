@@ -9,6 +9,11 @@ import com.lukasz.quizapp.repositories.AssignmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
+import static com.lukasz.quizapp.services.SolveService.mapSolveListToSolveDtoList;
+
 @Service
 public class AssignmentService {
 
@@ -18,11 +23,38 @@ public class AssignmentService {
 
     private QuizService quizService;
 
+    private AuthService authService;
+
     @Autowired
-    public AssignmentService(AssignmentRepository assignmentRepository, PathService pathService, QuizService quizService) {
+    public AssignmentService(AssignmentRepository assignmentRepository, PathService pathService, QuizService quizService, AuthService authService) {
         this.assignmentRepository = assignmentRepository;
         this.pathService = pathService;
         this.quizService = quizService;
+        this.authService = authService;
+    }
+
+    public Assignment read(Long id) {
+        Optional<Assignment> assignmentOptional = assignmentRepository.findById(id);
+
+        if(assignmentOptional.isEmpty()) {
+            throw new RuntimeException(String.format("Assignment with id %d not found", id));
+        }
+
+        Assignment assignment = assignmentOptional.get();
+
+        if(!authService.isModeratorOrAdmin()) {
+            assignment.setSolves(null);
+        }
+
+        return assignment;
+    }
+
+    public boolean exists(Long id) {
+        if(id == null) return false;
+
+        Optional<Assignment> assignment = assignmentRepository.findById(id);
+
+        return assignment.isPresent();
     }
 
     public AssignmentDto save(AssignmentDto assignmentDto) throws PathNotFoundException {
@@ -32,7 +64,7 @@ public class AssignmentService {
 
         Assignment assignment = new Assignment();
         assignment.setId(null);
-        assignment.setName(assignment.getName());
+        assignment.setName(assignmentDto.getName());
 
         Path path = pathService.read(assignmentDto.getPathId());
         assignment.setPath(path);
@@ -51,6 +83,10 @@ public class AssignmentService {
         return mapAssignmentToAssignmentDto(savedAssignment);
     }
 
+    public Assignment save(Assignment assignment) {
+        return assignmentRepository.save(assignment);
+    }
+
     public static AssignmentDto mapAssignmentToAssignmentDto(Assignment assignment) {
         AssignmentDto assignmentDto = new AssignmentDto();
 
@@ -58,6 +94,7 @@ public class AssignmentService {
         assignmentDto.setName(assignment.getName());
         assignmentDto.setPathId(assignment.getPath().getId());
         assignmentDto.setQuizId(assignment.getPath().getId());
+        assignmentDto.setSolves(mapSolveListToSolveDtoList(assignment.getSolves()));
         assignmentDto.setExpirationDate(assignment.getExpirationDate());
         assignmentDto.setStartDate(assignment.getStartDate());
         assignmentDto.setSynchronous(assignment.isSynchronous());

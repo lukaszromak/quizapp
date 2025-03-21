@@ -1,10 +1,8 @@
 package com.lukasz.quizapp.services;
 
-import com.lukasz.quizapp.dto.AssignmentDto;
 import com.lukasz.quizapp.dto.PathDto;
 import com.lukasz.quizapp.dto.QuizDto;
 import com.lukasz.quizapp.dto.game.UserDto;
-import com.lukasz.quizapp.entities.Assignment;
 import com.lukasz.quizapp.entities.Path;
 import com.lukasz.quizapp.entities.Quiz;
 import com.lukasz.quizapp.entities.User;
@@ -16,7 +14,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -51,7 +48,13 @@ public class PathService {
     }
 
     public List<Path> read(User user) {
-        return pathRepository.findAllByTeacher(user);
+        if(authService.isAdmin()) {
+            return StreamSupport.stream(pathRepository.findAll().spliterator(), false).toList();
+        } else if (authService.isModerator()) {
+            return pathRepository.findAllByTeacher(user);
+        }
+
+       return pathRepository.findAllByStudentId(user.getId());
     }
 
     @Transactional
@@ -113,12 +116,20 @@ public class PathService {
         return pathList.stream().map(path -> new PathDto(path.getId(), path.getName(), null, null, null)).collect(Collectors.toList());
     }
 
-    public static PathDto mapPathToPathDto(Path path) {
+    public PathDto mapPathToPathDto(Path path) {
+        List<QuizDto> quizzesDto = null;
+        List<UserDto> userDtos = null;
+
+        if(authService.isModeratorOrAdmin()) {
+            userDtos = path.getStudents().stream().map(student -> new UserDto(student.getId(), student.getUsername())).collect(Collectors.toList());
+            quizzesDto = path.getQuizzes().stream().map(quiz -> new QuizDto(quiz.getId(), quiz.getTitle(), null, null)).collect(Collectors.toList());
+        }
+
         return new PathDto(
                 path.getId(),
                 path.getName(),
-                path.getStudents().stream().map(student -> new UserDto(student.getId(), student.getUsername())).collect(Collectors.toList()),
-                path.getQuizzes().stream().map(quiz -> new QuizDto(quiz.getId(), quiz.getTitle(), null, null)).collect(Collectors.toList()),
+                userDtos,
+                quizzesDto,
                 path.getAssignments().stream().map(assignment -> mapAssignmentToAssignmentDto(assignment)).collect(Collectors.toList()));
     }
 }

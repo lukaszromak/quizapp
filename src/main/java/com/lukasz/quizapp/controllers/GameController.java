@@ -7,6 +7,7 @@ import com.lukasz.quizapp.entities.User;
 import com.lukasz.quizapp.services.AuthService;
 import com.lukasz.quizapp.services.GameService;
 import com.lukasz.quizapp.services.QuizService;
+import jakarta.websocket.server.PathParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 
@@ -36,14 +38,14 @@ public class GameController {
 
     @GetMapping
     @RequestMapping("/game/create/{quizId}")
-    public ResponseEntity<Game> createGame(@PathVariable Long quizId) {
+    public ResponseEntity<Game> createGame(@PathVariable Long quizId, @RequestParam(required = false) Long assignmentId) {
         User user = authService.getAuthenticatedUser();
 
         if(quizId == null) {
             return ResponseEntity.ok(null);
         }
 
-        return ResponseEntity.ok(gameService.createGame(user.getUsername(), quizId));
+        return ResponseEntity.ok(gameService.createGame(user.getUsername(), quizId, assignmentId));
     }
 
     @GetMapping

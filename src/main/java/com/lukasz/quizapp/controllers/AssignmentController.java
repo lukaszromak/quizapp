@@ -5,6 +5,7 @@ import com.lukasz.quizapp.exception.PathNotFoundException;
 import com.lukasz.quizapp.services.AssignmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ public class AssignmentController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
     public ResponseEntity<AssignmentDto> createAssignment(@RequestBody AssignmentDto assignmentDto) throws PathNotFoundException {
         return ResponseEntity.ok(assignmentService.save(assignmentDto));
     }

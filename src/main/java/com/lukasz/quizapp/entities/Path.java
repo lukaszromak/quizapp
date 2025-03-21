@@ -15,12 +15,16 @@ import java.util.List;
         attributeNodes = {
                 @NamedAttributeNode(value = "students"),
                 @NamedAttributeNode(value = "quizzes", subgraph = "quizzes-subgraph"),
-                @NamedAttributeNode(value = "assignments")
+                @NamedAttributeNode(value = "assignments", subgraph = "assignments-subgraph")
         },
         subgraphs = {
                 @NamedSubgraph(
                         name = "quizzes-subgraph",
                         attributeNodes = @NamedAttributeNode("questions")
+                ),
+                @NamedSubgraph(
+                        name = "assignments-subgraph",
+                        attributeNodes = @NamedAttributeNode("solves")
                 )
         }
 )

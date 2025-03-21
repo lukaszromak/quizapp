@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { Client } from "@stomp/stompjs"
+import { useLocation } from "react-router-dom"
 
 import { config } from "misc/constants"
 import { axiosPrivate } from "misc/utils"
@@ -26,6 +27,7 @@ function HostPanel() {
   const [gameEnded, setGameEnded] = useState(false)
   const [answersTopic, setAnswerTopic] = useState("")
   const [error, setError] = useState("")
+  const location = useLocation()
 
   const connectToWebSocket = (gameId: string): Client => {
     const client = new Client({
@@ -93,7 +95,7 @@ function HostPanel() {
 
     if (gameHostedResponse.status === 200) {
       if (gameHostedResponse.data === "") {
-        const gameCodeResponse = await axiosPrivate.get(`/game/create/${id}`, { withCredentials: true })
+        const gameCodeResponse = await axiosPrivate.get(`/game/create/${id}${location?.state?.assignmentId ? `?assignmentId=${location.state.assignmentId}` : ""}`, { withCredentials: true })
         if (gameCodeResponse.data === "") {
           console.log("Error while creating game")
         } else {
@@ -196,7 +198,7 @@ function HostPanel() {
         </BigTextContainer>
         :
         <BigTextContainer size={1}>
-          {client ? <p>"CLIENT"</p> : <p>"NO CLIENT"</p>}
+          {client ? <p>{location?.state?.assignmentName && `${location.state.assignmentName}`}</p> : <p>"Connecting..."</p>}
           <div className="text-center">Enter this code to join</div>
           <div className="mb-5">{gameCode}</div>
           <UsernamesDisplay usernames={players} />

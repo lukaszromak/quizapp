@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lukasz.quizapp.dto.game.Game;
 import com.lukasz.quizapp.dto.game.GameEvent;
 import com.lukasz.quizapp.dto.game.GameEventType;
-import com.lukasz.quizapp.entities.Answer;
-import com.lukasz.quizapp.entities.Question;
-import com.lukasz.quizapp.entities.Quiz;
-import com.lukasz.quizapp.entities.Solve;
+import com.lukasz.quizapp.entities.*;
 import com.lukasz.quizapp.repositories.QuizRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,26 +24,41 @@ import java.util.concurrent.*;
 @Service
 public class GameService {
     private static char[] chars = "0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
+
     private static final int GAME_CODE_LENGTH = 6;
+
     private static final int ANSWER_TOPIC_CODE_LENGTH = 36;
+
     private static final int DELAY_BETWEEN_QUESTIONS = 10;
+
     private SimpMessagingTemplate template;
+
     private ObjectMapper objectMapper;
+
     private static final Map<String, Game> games = new ConcurrentHashMap<>();
+
     private static final Map<String, String> answerTopics = new ConcurrentHashMap<>();
+
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
+
     private final QuizRepository quizRepository;
+
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
+
     private final SolveService solveService;
+
     private final UserService userService;
 
+    private final AssignmentService assignmentService;
+
     @Autowired
-    public GameService(SimpMessagingTemplate simpMessagingTemplate, ObjectMapper objectMapper, QuizRepository quizRepository, SolveService solveService, UserService userService) {
+    public GameService(SimpMessagingTemplate simpMessagingTemplate, ObjectMapper objectMapper, QuizRepository quizRepository, SolveService solveService, UserService userService, AssignmentService assignmentService) {
         this.template = simpMessagingTemplate;
         this.objectMapper = objectMapper;
         this.quizRepository = quizRepository;
         this.solveService = solveService;
         this.userService = userService;
+        this.assignmentService = assignmentService;
     }
 
     public Game getHostedGame(String username) {
@@ -71,16 +83,20 @@ public class GameService {
         return game.get().getValue();
     }
 
-    public Game createGame(String username, Long id) {
-        String gameCode = generateGameCode();
+    public Game createGame(String username, Long quizId, Long assignmentId) {
+        Optional<Quiz> quiz = quizRepository.findById(quizId);
 
-        Optional<Quiz> quiz = quizRepository.findById(id);
+        if(assignmentId != null && !assignmentService.exists(assignmentId)) {
+            return null;
+        }
 
         if (quiz.isEmpty()) {
             return null;
         }
 
-        Game game = new Game(gameCode, username, generateAnswerTopicCode() , quiz.get());
+        String gameCode = generateGameCode();
+
+        Game game = new Game(gameCode, username, generateAnswerTopicCode() ,quiz.get(), assignmentId);
         games.put(gameCode, game);
 
         return game;
@@ -189,14 +205,29 @@ public class GameService {
 
     private void saveScores(Game game) {
         List<Solve> scores = new ArrayList<>();
+        Assignment assignment;
+
+        if(assignmentService.exists(game.getAssignmentId())) {
+            assignment = assignmentService.read(game.getAssignmentId());
+        } else {
+            assignment = null;
+        }
 
         game.getScores().entrySet()
                 .forEach((element) -> {
-                    Solve solve = new Solve(null, game.getQuiz(), null, userService.read(element.getKey()), element.getValue().intValue(), game.getQuiz().getQuestions().size() * 10000, null, true);
+                    Solve solve = new Solve(null, game.getQuiz(), assignment, userService.read(element.getKey()), element.getValue().intValue(), game.getQuiz().getQuestions().size() * 10000, null, true);
                     scores.add(solve);
                 });
 
-        solveService.save(scores);
+        List<Solve> savedScores = solveService.save(scores);
+
+        if(assignment != null) {
+            for(Solve solve: savedScores) {
+                assignment.getSolves().add(solve);
+            }
+
+            assignmentService.save(assignment);
+        }
     }
 
     private record SendUpdatesToTopicTask(Game game, SimpMessagingTemplate template, ObjectMapper objectMapper) implements Runnable {

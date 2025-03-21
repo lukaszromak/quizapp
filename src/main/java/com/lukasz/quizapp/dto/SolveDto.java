@@ -13,7 +13,7 @@ public class SolveDto {
 
     private Long id;
 
-    private QuizDto quiz;
+    private Long quizId;
 
     private Long userId;
 

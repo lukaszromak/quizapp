@@ -39,6 +39,24 @@ public class AuthService {
         return userService.read(userDetails.getId());
     }
 
+    public boolean isModeratorOrAdmin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        return authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_MODERATOR") || r.getAuthority().equals("ROLE_ADMIN"));
+    }
+
+    public boolean isAdmin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        return authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_ADMIN"));
+    }
+
+    public boolean isModerator() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        return authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_MODERATOR"));
+    }
+
     public RefreshToken changePassword(String oldPassword, String newPassword) {
         User user = getAuthenticatedUser();
 

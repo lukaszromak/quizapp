@@ -1,5 +1,6 @@
 package com.lukasz.quizapp.services;
 
+import com.lukasz.quizapp.dto.SolveDto;
 import com.lukasz.quizapp.entities.Solve;
 import com.lukasz.quizapp.entities.User;
 import com.lukasz.quizapp.exception.UnauthorizedException;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
+
+import static com.lukasz.quizapp.services.QuizService.mapQuizToQuizDto;
 
 @Service
 public class SolveService {
@@ -42,5 +45,9 @@ public class SolveService {
         }
 
         return this.solveRepository.findAllByUser(user);
+    }
+
+    public static List<SolveDto> mapSolveListToSolveDtoList(List<Solve> solves) {
+        return solves.stream().map((solve -> new SolveDto(solve.getId(), solve.getQuiz().getId(), solve.getId(), solve.getCorrectAnswers(), solve.getTotalAnswers(), solve.isWasGame()))).toList();
     }
 }
