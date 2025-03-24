@@ -9,13 +9,13 @@ export const axiosPublic = axios.create({
 })
 
 export const axiosPrivate = axios.create({
-  baseURL: config.url.API_BASE_URL
+  baseURL: config.url.API_BASE_URL,
+  withCredentials: true
 })
 
 axiosPrivate.interceptors.request.use(
   async (config) => {
     const authState = store?.getState()?.auth?.user
-    console.log(authState?.expiresAt)
     if (authState?.expiresAt) {
 
       if (authState?.expiresAt - moment.now() < 10) {

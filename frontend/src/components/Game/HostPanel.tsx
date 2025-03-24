@@ -91,11 +91,11 @@ function HostPanel() {
   }
 
   const createGame = async () => {
-    const gameHostedResponse = await axiosPrivate.get("/game/hostedGame", { withCredentials: true })
+    const gameHostedResponse = await axiosPrivate.get("/game/hostedGame")
 
     if (gameHostedResponse.status === 200) {
       if (gameHostedResponse.data === "") {
-        const gameCodeResponse = await axiosPrivate.get(`/game/create/${id}${location?.state?.assignmentId ? `?assignmentId=${location.state.assignmentId}` : ""}`, { withCredentials: true })
+        const gameCodeResponse = await axiosPrivate.get(`/game/create/${id}${location?.state?.assignmentId ? `?assignmentId=${location.state.assignmentId}` : ""}`)
         if (gameCodeResponse.data === "") {
           console.log("Error while creating game")
         } else {

@@ -12,9 +12,7 @@ const name = 'test'
 export const fetch = createAsyncThunk(
     `${name}/fetch`,
     async () => {
-        const response = await axiosPrivate.get('/auth/test/user', {
-            withCredentials: true,
-        })
+        const response = await axiosPrivate.get('/auth/test/user')
         return response.data
     }
 )

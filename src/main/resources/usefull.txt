@@ -17,3 +17,13 @@ jezeli interaktywny nauczyciel musi go zhostowac i podac kod, jezeli nie po pros
 TWORZENIE ASIGNMENT NA PODSTAWIE QUIZU
 OD KIEDY DOSTEPNY DLA UCZNIOW
 DO KIEDY DOSTEPNY DLA UCZNIOW
+
+endpointy
+wbudowane serwery
+kompatybilnosc paczek
+
+application.properties jako uproszczona
+
+spring data
+
+rysunki do springa reacta

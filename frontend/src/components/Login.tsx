@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react"
-import { Link, useSearchParams } from "react-router-dom"
+import { useSearchParams } from "react-router-dom"
 
 import { history } from "../helpers/history"
 import { useAppSelector, useAppDispatch } from "../store"
 import Button from "./Misc/Button"
 import { login } from "../features/authSlice"
 import ErrorMessage from "./Misc/ErrorMessage"
+import StyledLink from "./Misc/StyledLink"
+import { genericContainerStyle } from "./Misc/Styles"
 
 const linkStyle = "text-blue-600 text-s italic hover:text-blue-800"
 
@@ -37,7 +39,7 @@ export default function Login() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
+    <div className={genericContainerStyle}>
       {registered ? <p className={linkStyle}>Registered successfully.</p> : ""}
       <form onSubmit={(e) => onSubmit(e)}>
         <div className="space-y-12">
@@ -80,7 +82,7 @@ export default function Login() {
               </div>
             </div>
             {authError ? <ErrorMessage>Invalid email or username.</ErrorMessage> : ""}
-            {<Link to="/register"><span className={linkStyle}>Register</span></Link>}
+            {<StyledLink to="/register"><span className={linkStyle}>Register</span></StyledLink>}
           </div>
         </div>
         <div className="mt-6 flex items-center justify-end gap-x-6">

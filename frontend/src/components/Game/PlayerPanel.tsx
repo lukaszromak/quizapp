@@ -86,7 +86,7 @@ function PlayerPanel() {
 
   const checkIsInGame = async () => {
     try {
-      const response = await axiosPrivate.get("/game/currentGame", { withCredentials: true })
+      const response = await axiosPrivate.get("/game/currentGame")
 
       if (response.status === 200) {
         if (response.data !== "") {

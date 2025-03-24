@@ -65,7 +65,7 @@ export const create = createAsyncThunk(
       }
     }
 
-    const response = await axiosPrivate.post(`/quiz`, formData, { withCredentials: true });
+    const response = await axiosPrivate.post(`/quiz`, formData);
     return response.data
   }
 )

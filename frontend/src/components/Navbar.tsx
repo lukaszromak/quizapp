@@ -5,6 +5,7 @@ import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useAppSelector, useAppDispatch } from "../store"
 import { logout } from '../features/authSlice'
 import { useState, useEffect } from 'react'
+import StyledLink from './Misc/StyledLink'
 
 const _navigation = [
   { name: 'Home', href: '/', current: false},
@@ -57,7 +58,6 @@ export default function Navbar() {
     for(let i = 0; i < rolesUser.length; i++) {
       for(let j = 0; j < rolesLink.length; j++) {
         if(rolesUser[i] === rolesLink[j]) {
-          console.log(rolesUser[i], rolesLink[j], rolesUser[i] === rolesLink[j])
           return true
         }
       }
@@ -91,7 +91,7 @@ export default function Navbar() {
               <div className="flex space-x-4">
                 {navigation.map((item) => (
                   (!item.roles || (authUser?.roles && canSeeLink(authUser?.roles, item.roles)))  &&
-                  <Link
+                  <StyledLink
                     key={item.name}
                     to={item.href}
                     aria-current={item.current ? 'page' : undefined}
@@ -101,7 +101,7 @@ export default function Navbar() {
                     )}
                   >
                     {item.name}
-                  </Link>
+                  </StyledLink>
                 ))}
               </div>
             </div>
@@ -137,9 +137,9 @@ export default function Navbar() {
                     className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
                   >
                     <MenuItem>
-                      <Link to="/user" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
+                      <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
                         Your Profile
-                      </Link>
+                      </a>
                     </MenuItem>
                     <MenuItem>
                       <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
@@ -155,9 +155,9 @@ export default function Navbar() {
                 </Menu>
               </>
               :
-              <Link to='login'>
+              <StyledLink to='login'>
                 <span className='text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'>Sign in</span>
-              </Link>
+              </StyledLink>
             }
           </div>
         </div>

@@ -2,12 +2,11 @@ import { Quiz, QuizDto } from "types";
 import { useState, useEffect, Ref } from "react";
 import { useAppDispatch, useAppSelector } from "store";
 
-import { history } from "helpers/history";
-import { reset, create, setTitle, readFromLocalStorage, addQuestion, deleteQuestion, addAnswer, deleteAnswer, handleQuestionInput, handleAnswerInput, markAnswerAsCorrect, handleTimeToAnswerInput, handleQuestionImageInput, toggleCategory, clearQuestionImage } from "features";
+import { create, setTitle, readFromLocalStorage, addQuestion, deleteQuestion, addAnswer, deleteAnswer, handleQuestionInput, handleAnswerInput, markAnswerAsCorrect, handleTimeToAnswerInput, handleQuestionImageInput, toggleCategory, clearQuestionImage } from "features";
 import { fetchQuizCategory } from "features/quizCategorySlice";
 import Button from "components/Misc/Button";
 import ErrorMessage from "components/Misc/ErrorMessage";
-import { genericListItemStyle, genericTextInputStyle } from "components/Misc/Styles";
+import { genericContainerStyle, genericTextInputStyle } from "components/Misc/Styles";
 
 const categoriesColors = [
   'bg-violet-700',
@@ -99,7 +98,7 @@ function CreateQuiz() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
+    <div className={genericContainerStyle}>
       <div className="mb-1">
         <label className="block my-2 font-medium" htmlFor="quizTitle">Quiz title</label>
         <input className="rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md p-1"

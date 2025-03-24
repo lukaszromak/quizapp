@@ -1,11 +1,11 @@
-import { Link } from "react-router-dom";
+import StyledLink from "components/Misc/StyledLink"
 
 function ProfileNavigation() {
   return (
     <>
-      <Link to="/user/changePassword">Change password</Link>
-      <Link to="/user/quizzes">Quizzes</Link>
-      <Link to="/user/solvedQuizzes">Solved quizzes</Link>
+      <StyledLink to="/user/changePassword">Change password</StyledLink>
+      <StyledLink to="/user/quizzes">Quizzes</StyledLink>
+      <StyledLink to="/user/solvedQuizzes">Solved quizzes</StyledLink>
     </>
   )
 }

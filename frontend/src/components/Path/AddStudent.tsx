@@ -30,12 +30,12 @@ function AddStudent(props: AddStudentProps) {
   const addUser = async () => {
     setAddUserError("")
     try {
-      const response = await axiosPrivate.get(`/user/exists?searchString=${studentText}`, { withCredentials: true })
+      const response = await axiosPrivate.get(`/user/exists?searchString=${studentText}`)
       if (response.data.exists === true) {
         if ("setPath" in props) {
           const path = props.path
           path.students = [...path.students, {id: response.data.id, username: response.data.username}]
-          const updated = await axiosPrivate.put(`/path`, props.path, { withCredentials: true })
+          const updated = await axiosPrivate.put(`/path`, props.path)
           console.log(updated)
           props.setPath(updated.data)
         }
@@ -61,10 +61,10 @@ function AddStudent(props: AddStudentProps) {
           {student.username}
         </div>
       )))}
-      <Typography variant="p">add students by their username, email or id</Typography>
-      <input type="text" placeholder="lukaszromak" value={studentText} onInput={(e) => setStudentText(e.currentTarget.value)} className={genericTextInputStyle}></input>
+      <Typography variant="p" className="mb-2">add students by their username, email or id</Typography>
+      <input type="text" placeholder="lukaszromak" value={studentText} onInput={(e) => setStudentText(e.currentTarget.value)} className={`${genericTextInputStyle} mb-2`}></input>
       {addUserError.length > 0 && <ErrorMessage>{addUserError}</ErrorMessage>}
-      <Button color="blue" style="block" onClick={() => addUser()}>Add</Button>
+      <Button color="blue" style="block mb-2" onClick={() => addUser()}>Add</Button>
     </>
   )
 }

@@ -9,7 +9,7 @@ import { fetchQuizCategory } from "features/quizCategorySlice";
 import { Typography } from "components/Misc/Typography"
 import Button from "components/Misc/Button"
 import ErrorMessage from "components/Misc/ErrorMessage"
-import { genericListItemStyle, genericTextInputStyle } from "components/Misc/Styles"
+import { genericListItemStyle, genericTextInputStyle, genericContainerStyle } from "components/Misc/Styles"
 import AddStudent from "./AddStudent"
 
 function PathCreate() {
@@ -37,7 +37,7 @@ function PathCreate() {
   }, [])
 
   const fetchQuizes = async () => {
-    const response = await axiosPrivate.get('/user/quizzes', { withCredentials: true })
+    const response = await axiosPrivate.get('/user/quizzes')
 
     if (response.status === 200) {
       setOwnQuizes(response.data)
@@ -120,7 +120,7 @@ function PathCreate() {
     setSubmitError("")
 
     try {
-      const response = await axiosPrivate.post("/path", path, { withCredentials: true })
+      const response = await axiosPrivate.post("/path", path)
       navigate(`/path/details/${response.data.id}`)
     } catch (error) {
       setSubmitError("Error while submitting a path.")
@@ -128,7 +128,7 @@ function PathCreate() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
+    <div className={genericContainerStyle}>
       <Typography variant="h1" className="text-center">Create class</Typography>
       <Typography variant="p">Class name</Typography>
       <input type="text" placeholder="Programming class" value={name} onInput={(e) => setName(e.currentTarget.value)} className={genericTextInputStyle} />

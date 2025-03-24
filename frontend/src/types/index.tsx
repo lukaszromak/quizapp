@@ -72,10 +72,11 @@ interface Game {
 interface Solve {
     id: number,
     quiz: Quiz,
-    userId: number,
+    user: Student,
     correctAnswers: number,
     totalAnswers: number,
-    wasGame: boolean
+    wasGame: boolean,
+    submittedAt: Date
 }
 
 interface Student {
@@ -103,6 +104,7 @@ interface Assignment {
     name: string
     pathId: number,
     quizId: number,
+    solves: Array<Solve>,
     startDate: Date,
     expirationDate: Date,
     isSynchronous: boolean

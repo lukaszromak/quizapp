@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
 import { useAppDispatch, useAppSelector } from "store"
 
 import { axiosPublic, axiosPrivate } from "misc/utils"
@@ -8,6 +7,8 @@ import { fetchQuizCategory } from "features/quizCategorySlice";
 import RainbowQuizCategories from "components/QuizCategory/RainbowQuizCategories"
 import { Typography } from "components/Misc/Typography"
 import NavigationButton from "components/Misc/NavigationButton"
+import StyledLink from "components/Misc/StyledLink";
+import { genericContainerStyle } from "components/Misc/Styles";
 
 function QuizList({ source }: { source?: string }) {
   const user = useAppSelector(state => state.auth.user)
@@ -20,13 +21,11 @@ function QuizList({ source }: { source?: string }) {
 
   const fetchQuizes = async () => {
     let url = '/quiz'
-    let axiosInstance = axiosPublic
+    let axiosInstance = axiosPrivate
     const args: any = {}
 
     if(source) {
       url = source
-      axiosInstance = axiosPrivate
-      args.withCredentials = true
     }
 
     const response = await axiosInstance.get(url, args)
@@ -45,7 +44,7 @@ function QuizList({ source }: { source?: string }) {
   }, [])
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
+    <div className={genericContainerStyle}>
       {(source && !user) 
         ? 
       <NavigationButton navigateTo="/login?returnUrl=/user/quizzes">Login to view your quizzes</NavigationButton> 
@@ -55,9 +54,9 @@ function QuizList({ source }: { source?: string }) {
         {quizes.length === 0 && <Typography variant="p">You haven't created any quizzes.</Typography>}
         {quizes.map((quiz) => (
           <div key={quiz.id} className="mb-2 border-2 border-dashed px-8 py-4 mb-1">
-            <Link to={`/quiz/details/${quiz.id}`}>
+            <StyledLink to={`/quiz/details/${quiz.id}`}>
               <Typography variant="h5">{quiz.title}</Typography>
-            </Link>
+            </StyledLink>
             <RainbowQuizCategories categories={quiz.categories}/>
           </div>
         ))}

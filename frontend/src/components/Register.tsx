@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
 
 import { history } from "helpers/history"
 import { useAppSelector, useAppDispatch } from "store"
 
 import { register } from "features/authSlice"
 import ErrorMessage from "./Misc/ErrorMessage"
-
-const linkStyle = "text-blue-600 text-s italic hover:text-blue-800"
+import StyledLink from "./Misc/StyledLink"
+import { genericContainerStyle } from "./Misc/Styles"
 
 function Register() {
   const [username, setUsername] = useState<string>("")
@@ -30,7 +29,7 @@ function Register() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
+    <div className={genericContainerStyle}>
       <form onSubmit={(e) => onSubmit(e)}>
         <div className="space-y-12">
           <div className="border-b border-gray-900/10 pb-12">
@@ -93,7 +92,7 @@ function Register() {
               </div>
             </div>
             {authError ? <ErrorMessage>Invalid email or username.</ErrorMessage> : ""}
-            {<Link to="/login"><span className={linkStyle}>Login</span></Link>}
+            {<StyledLink to="/login">Login</StyledLink>}
           </div>
         </div>
         <div className="mt-6 flex items-center justify-end gap-x-6">

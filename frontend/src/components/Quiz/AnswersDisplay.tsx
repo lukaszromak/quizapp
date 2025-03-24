@@ -13,7 +13,13 @@ type WithUserAnswers = {
   userQuestions: Array<Question>;
 };
 
-type AnswersParams = WithHandleInput | WithUserAnswers;
+type WithIsValid = {
+  handleInput?: null,
+  quizQuestions: Array<Question>,
+  userQuestions?: null
+}
+
+type AnswersParams = WithHandleInput | WithUserAnswers | WithIsValid;
 
 interface AnswersColors {
   red?: number
@@ -41,6 +47,7 @@ function QuestionsDisplay({ handleInput, quizQuestions, userQuestions }: Answers
   return (
     quizQuestions.map((question, qidx) => {
       let answerColors: AnswersColors = {}
+
       if(userQuestions) {
         answerColors = getAnswersColors(question, userQuestions[qidx])
       }
@@ -50,7 +57,7 @@ function QuestionsDisplay({ handleInput, quizQuestions, userQuestions }: Answers
         <div>{question.question}</div>
         {question.answers.map((answer, aidx) => (
           <div key={answer.id}>
-            {userQuestions
+            {userQuestions //WithUserAnswers case
               ?
                 (userQuestions[qidx] && userQuestions[qidx].answers[aidx] &&
                   question.answers[aidx]) 
@@ -60,10 +67,19 @@ function QuestionsDisplay({ handleInput, quizQuestions, userQuestions }: Answers
                       <label htmlFor="">{answer.content}</label>
                     </div>
                   :
-                    <input type="radio">{answer.content}</input>
+                    <>
+                      <input type="radio"></input>
+                      <label htmlFor="">{answer.content}</label>
+                    </>
               :
+              handleInput // WithHandleInput case
+              ?
                 <>
                   <input type="radio" id={answer.id?.toString()} value={answer.id ? answer.id : ""} onChange={(e) => handleInput(e, question.id)} checked={answer.isValid} />
+                  <label htmlFor={question.id?.toString()}>{answer.content}</label>
+                </>
+              : /* WithIsValid case */<>
+                  <input type="radio" id={answer.id?.toString()} value={answer.id ? answer.id : ""} checked={answer.isValid} readOnly/>
                   <label htmlFor={question.id?.toString()}>{answer.content}</label>
                 </>}
           </div>

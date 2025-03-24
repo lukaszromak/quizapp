@@ -25,9 +25,7 @@ const name = 'quizCategory'
 export const fetchQuizCategory = createAsyncThunk(
     `${name}/fetch`,
     async () => {
-        const response = await axiosPublic.get('/quizCategory', {
-            withCredentials: true,
-        })
+        const response = await axiosPublic.get('/quizCategory')
         return response.data
     }
 )

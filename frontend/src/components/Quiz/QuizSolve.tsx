@@ -6,7 +6,7 @@ import { axiosPrivate, axiosPublic } from "misc/utils";
 import { Question, Quiz, QuizCategory } from "types"
 import NavigationButton from "components/Misc/NavigationButton";
 import Button from "components/Misc/Button";
-import AnswersDisplay from "./AnswersDisplay";
+import { genericContainerStyle } from "components/Misc/Styles";
 import QuestionsDisplay from "./AnswersDisplay";
 
 function QuizSolve() {
@@ -21,7 +21,7 @@ function QuizSolve() {
   const fetchQuiz = async (id: number) => {
     setIsLoading(true)
     try {
-      const response = await axiosPublic.get(`/quiz/${id}`)
+      const response = await axiosPrivate.get(`/quiz/${id}`)
       setQuiz(response.data)
     } catch (error) {
       console.log(error)
@@ -33,7 +33,7 @@ function QuizSolve() {
   const sendSolution = async () => {
     setIsSubmitting(true)
     try {
-      const response = await axiosPrivate.post(`/quiz/solve/${quiz.id}`, quiz, { withCredentials: true })
+      const response = await axiosPrivate.post(`/quiz/solve/${quiz.id}`, quiz)
       if (response.status === 200) {
         navigate('/quiz/results',{ state: { results: response.data } });
       }
@@ -86,11 +86,9 @@ function QuizSolve() {
       console.log(error)
     }
   }
-
-  console.log(quiz)
-
+  
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
+    <div className={genericContainerStyle}>
       {isLoading && <p>Quiz loading...</p>}
       {noAuth ? <NavigationButton navigateTo={`/login?returnUrl=/quiz/solve/${quiz.id}`}>Login to solve quiz</NavigationButton> :
         <>

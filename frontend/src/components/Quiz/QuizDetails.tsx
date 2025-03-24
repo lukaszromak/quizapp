@@ -7,6 +7,7 @@ import { fetchQuizCategory } from "features/quizCategorySlice";
 import RainbowQuizCategories from "components/QuizCategory/RainbowQuizCategories"
 import NavigationButton from "components/Misc/NavigationButton"
 import { Typography } from "components/Misc/Typography"
+import { genericContainerStyle } from "components/Misc/Styles";
 
 function QuizDetails() {
     const user = useAppSelector(state => state.auth.user)
@@ -25,13 +26,12 @@ function QuizDetails() {
             const parsedId = parseInt(id)
             if(!isNaN(parsedId)) {
                 dispatch(fetchQuiz(parsedId))
-                dispatch(fetchQuizCategory())
             }
         }
     }, [user])
 
     return (
-        <div className="mx-auto max-w-7xl px-4 py-8">
+        <div className={genericContainerStyle}>
             {/* <Button onClick={() => console.log()}></Button> */}
             <Typography variant="h1">{quiz.title}</Typography>
             <Typography variant="p" className="mb-4">❓ {quiz.questions.length} questions</Typography>

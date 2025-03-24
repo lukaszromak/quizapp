@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import { axiosPublic } from '../misc/utils';
+import { axiosPrivate, axiosPublic } from '../misc/utils';
 import { Quiz } from 'types';
 
 interface State {
@@ -13,7 +13,7 @@ const name = 'readQuiz'
 export const fetchQuiz = createAsyncThunk(
     `${name}/fetch`,
     async (id: number) => {
-        const response = await axiosPublic.get(`/quiz/${id}`)
+        const response = await axiosPrivate.get(`/quiz/${id}`)
         return response.data
     }
 )

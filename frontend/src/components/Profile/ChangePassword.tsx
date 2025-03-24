@@ -5,6 +5,7 @@ import { axiosPrivate } from "misc/utils"
 import ErrorMessage from "components/Misc/ErrorMessage"
 import SuccessMessage from "components/Misc/SuccessMessage"
 import { AxiosError } from "axios"
+import { genericContainerStyle } from "components/Misc/Styles"
 
 interface ChangePasswordRequest {
   oldPassword: string,
@@ -25,7 +26,7 @@ function ChangePassword() {
     }
 
     try {
-      const response = await axiosPrivate.post("/auth/changePassword", body, { withCredentials: true })
+      const response = await axiosPrivate.post("/auth/changePassword", body)
 
       if(response.status === 200) {
         setErrorInfo("")
@@ -47,7 +48,7 @@ function ChangePassword() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
+    <div className={genericContainerStyle}>
       <form onSubmit={(e) => onSubmit(e)}>
         <div className="space-y-12">
           <div className="border-b border-gray-900/10 pb-12">

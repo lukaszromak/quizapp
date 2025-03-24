@@ -38,7 +38,7 @@ function SolvedQuizesDashboard() {
 
   const fetchSolves = async () => {
     try {
-      const response = await axiosPrivate.get(`/user/${user?.id}/solves`, { withCredentials: true })
+      const response = await axiosPrivate.get(`/user/${user?.id}/solves`)
 
       if(response.status === 200) {
         const solves = response.data as Array<Solve>

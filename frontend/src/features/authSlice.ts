@@ -32,7 +32,7 @@ export const login = createAsyncThunk(
 export const logout = createAsyncThunk(
     `${name}/logout`,
     async (_, getState) => {
-        const response = await axiosPrivate.post('/auth/signout', {}, { withCredentials: true });
+        const response = await axiosPrivate.post('/auth/signout', {});
         return response.data
     }
 )
@@ -95,7 +95,6 @@ export const authSlice = createSlice({
             state.isLoading = true
         })
         .addCase(refreshToken.fulfilled, (state, action) => {
-            console.log("refreshed token")
             if (state.user) {
                 state.user.expiresAt = action.payload.expiresAt
             }
