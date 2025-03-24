@@ -1,5 +1,6 @@
 package com.lukasz.quizapp.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +20,7 @@ public class SubmittedAnswer {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "solve_id")
+    @JsonIgnore
     private Solve solve;
 
     @ManyToOne

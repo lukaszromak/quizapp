@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate, useSearchParams } from "react-router-dom"
 import { useAppSelector } from "store";
 
-import { axiosPrivate, axiosPublic } from "misc/utils";
+import { axiosPrivate } from "misc/utils";
 import { Question, Quiz, QuizCategory } from "types"
 import NavigationButton from "components/Misc/NavigationButton";
 import Button from "components/Misc/Button";
@@ -17,6 +17,7 @@ function QuizSolve() {
   const [noAuth, setNoAuth] = useState(false)
   const [quiz, setQuiz] = useState<Quiz>({ id: null, title: "", questions: new Array<Question>(), categories: new Array<QuizCategory>() });
   const { id } = useParams()
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const fetchQuiz = async (id: number) => {
     setIsLoading(true)
@@ -33,7 +34,8 @@ function QuizSolve() {
   const sendSolution = async () => {
     setIsSubmitting(true)
     try {
-      const response = await axiosPrivate.post(`/quiz/solve/${quiz.id}`, quiz)
+      const assignmentId = searchParams.get("assignmentId")
+      const response = await axiosPrivate.post(`/quiz/solve/${quiz.id}${assignmentId ? `?assignmentId=${assignmentId}` : ""}`, quiz)
       if (response.status === 200) {
         navigate('/quiz/results',{ state: { results: response.data } });
       }

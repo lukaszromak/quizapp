@@ -4,6 +4,7 @@ import com.lukasz.quizapp.dto.AssignmentDto;
 import com.lukasz.quizapp.entities.Assignment;
 import com.lukasz.quizapp.entities.Path;
 import com.lukasz.quizapp.entities.Quiz;
+import com.lukasz.quizapp.entities.User;
 import com.lukasz.quizapp.exception.PathNotFoundException;
 import com.lukasz.quizapp.repositories.AssignmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.lukasz.quizapp.services.SolveService.mapSolveListToSolveDtoList;
@@ -44,7 +46,8 @@ public class AssignmentService {
         Assignment assignment = assignmentOptional.get();
 
         if(modCheck && !authService.isModeratorOrAdmin()) {
-            assignment.setSolves(null);
+            User user = authService.getAuthenticatedUser();
+            assignment.setSolves(assignment.getSolves().stream().filter(solve -> Objects.equals(solve.getUser().getId(), user.getId())).toList());
         }
 
         return assignment;

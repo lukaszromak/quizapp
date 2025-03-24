@@ -31,8 +31,9 @@ public class Assignment {
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
-    @OneToMany
-    @JoinColumn(name = "solve_id")
+    @OneToMany(
+            mappedBy = "assignment"
+    )
     private List<Solve> solves;
 
     private Date startDate;

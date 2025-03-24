@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom"
 
 import BigTextContainer from "components/Misc/BigTextContainer"
 import AnswersDisplay from "./AnswersDisplay"
-import { Question } from "types"
+import { Question, SubmittedAnswer } from "types"
 import { genericContainerStyle } from "components/Misc/Styles"
 
 function QuizResults() {
@@ -27,50 +27,16 @@ function QuizResults() {
     return -1
   }
 
-  const isQuestionsArray = (questions: any): boolean => {
-    if (Array.isArray(questions) && questions.every((question) =>
-      typeof question.question === "string" &&
-      Array.isArray(question.answers) && question.answers.every((answer: any) =>
-        typeof answer.content === "string" &&
-        typeof answer.isValid === "boolean"
-      )
-    )
-    ) {
-      return true
-    }
-
-    return false
-  }
-
-  const mapUserQuestions = (userAnswers: any[]) => {
-    let mapped = []
-    for(let i = 0; i < userAnswers.length; i++) {
-      let submittedAnswerId = userAnswers[i].answer.id
-      for(let j = 0; j < userAnswers[i].question.answers.length; j++) {
-        if(userAnswers[i].question.answers[j].id == submittedAnswerId) {
-          userAnswers[i].question.answers[j].isValid = true
-        } else {
-          userAnswers[i].question.answers[j].isValid = false
-        }
-      }
-
-      mapped.push(userAnswers[i].question)
-    }
-    console.log(mapped)
-    return mapped
-  };
-  
-
   const getQuizQuestions = () => {
     const quizQuestions = location?.state?.results?.quiz?.questions
 
-    return isQuestionsArray(quizQuestions) ? quizQuestions : new Array<Question>()
+    return quizQuestions ? quizQuestions : new Array<Question>()
   }
 
   const getUserQuestions = () => {
-    const userQuestions = mapUserQuestions(location?.state?.results?.userAnswers)
+    const userQuestions = location?.state?.results?.userAnswers
 
-    return isQuestionsArray(userQuestions) ? userQuestions : new Array<Question>()
+    return userQuestions ? userQuestions : new Array<SubmittedAnswer>()
   }
 
   return (
@@ -83,7 +49,7 @@ function QuizResults() {
         <div>⬇️⬇️⬇️</div>
       </BigTextContainer>
       <div className={genericContainerStyle}>
-        <AnswersDisplay quizQuestions={getQuizQuestions()} userQuestions={getUserQuestions()}/>
+        <AnswersDisplay quizQuestions={getQuizQuestions()} submittedAnswers={getUserQuestions()}/>
       </div>
     </>
   )

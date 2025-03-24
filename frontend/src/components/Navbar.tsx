@@ -91,7 +91,7 @@ export default function Navbar() {
               <div className="flex space-x-4">
                 {navigation.map((item) => (
                   (!item.roles || (authUser?.roles && canSeeLink(authUser?.roles, item.roles)))  &&
-                  <StyledLink
+                  <Link
                     key={item.name}
                     to={item.href}
                     aria-current={item.current ? 'page' : undefined}
@@ -101,7 +101,7 @@ export default function Navbar() {
                     )}
                   >
                     {item.name}
-                  </StyledLink>
+                  </Link>
                 ))}
               </div>
             </div>

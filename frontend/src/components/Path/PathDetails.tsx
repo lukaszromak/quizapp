@@ -50,17 +50,11 @@ function PathDetails() {
         <>
           <Typography variant="h3">Assignments</Typography>
           {path.assignments.toSorted((a, b) => b.expirationDate.getTime() - a.expirationDate.getTime()).map(assignment => (
-            <div key={assignment.id} className={genericListItemStyle}>
-              {
-                authUser?.roles && (authUser.roles.includes("ROLE_MODERATOR") || authUser.roles.includes("ROLE_ADMIN")) ?
-                  <StyledLink to={`/teacher/assignment/details/${assignment.id}`}>
-                    {`${assignment.name ? `${assignment.name} on` : ""} ${formatDate(assignment.startDate, true)}`}
-                  </StyledLink>
-                  :
-                  <StyledLink to={`/game/:id`}>
-                    {`${assignment.name} ${assignment.name && "on"} ${formatDate(assignment.startDate, true)}`}
-                  </StyledLink>
-              }
+            <div key={assignment.id} className={`${genericListItemStyle} flex items-center gap-2`}>
+              <StyledLink to={`/assignment/details/${assignment.id}`}>
+                {`${assignment.name ? `${assignment.name} on` : ""} ${formatDate(assignment.startDate, true)}`}
+              </StyledLink>
+              <p className="p-2 border rounded font-medium">{assignment.isSynchronous ? "Synchronous" : "Asynchronous"}</p>
             </div>
           ))}
           {

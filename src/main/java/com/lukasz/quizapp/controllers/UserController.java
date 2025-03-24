@@ -49,7 +49,7 @@ public class UserController {
 
     @GetMapping("/{userId}/solves")
     public List<SolveDto> getSolves(@PathVariable Long userId) {
-        List<Solve> solves = solveService.read(userId);
+        List<Solve> solves = solveService.read();
 
         return mapSolveListToSolveDtoList(solves);
     }

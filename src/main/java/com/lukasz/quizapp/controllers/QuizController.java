@@ -1,15 +1,12 @@
 package com.lukasz.quizapp.controllers;
 
-import com.lukasz.quizapp.dto.AnswerDto;
-import com.lukasz.quizapp.dto.QuestionDto;
-import com.lukasz.quizapp.dto.QuizSearch;
+import com.lukasz.quizapp.dto.*;
 import com.lukasz.quizapp.entities.*;
-import com.lukasz.quizapp.dto.QuizDto;
 import com.lukasz.quizapp.exception.AnswerNotFoundException;
+import com.lukasz.quizapp.exception.PathNotFoundException;
 import com.lukasz.quizapp.exception.QuestionNotFoundException;
-import com.lukasz.quizapp.services.AuthService;
-import com.lukasz.quizapp.services.QuizService;
-import com.lukasz.quizapp.services.SolveService;
+import com.lukasz.quizapp.exception.StudentNotInClassroom;
+import com.lukasz.quizapp.services.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,11 +28,17 @@ public class QuizController {
 
     private final AuthService authService;
 
+    private final AssignmentService assignmentService;
+
+    private final PathService pathService;
+
     @Autowired
-    public QuizController(QuizService quizService, SolveService solveService, AuthService authService) {
+    public QuizController(QuizService quizService, SolveService solveService, AuthService authService, AssignmentService assignmentService, PathService pathService) {
         this.quizService = quizService;
         this.solveService = solveService;
         this.authService = authService;
+        this.assignmentService = assignmentService;
+        this.pathService = pathService;
     }
 
     @PostMapping
@@ -56,21 +59,19 @@ public class QuizController {
     public ResponseEntity<Quiz> getQuiz(@PathVariable Long id) {
         Quiz quiz = quizService.read(id);
 
-        if(!authService.isModeratorOrAdmin()) {
-            quizService.nullifyIsValid(quiz);
-        }
-
         return ResponseEntity.ok(quiz);
     }
 
     @PostMapping
     @RequestMapping("/solve/{id}")
-    public ResponseEntity<Solve> submitSolution(@PathVariable Long id, @RequestBody QuizDto quizDto) {
+    public ResponseEntity<Solve> submitSolution(@PathVariable Long id, @RequestBody QuizDto quizDto, @RequestParam(required = false) Long assignmentId) throws PathNotFoundException {
         User user = authService.getAuthenticatedUser();
         Quiz quiz = quizService.read(id);
         Integer correctAnswers = quizService.countCorrectAnswers(quiz, quizDto);
 
         List<SubmittedAnswer> submittedAnswers = new ArrayList<>();
+
+        Solve solve = new Solve(null, quiz, null, user, correctAnswers, quiz.getQuestions().size(), submittedAnswers, false, null);
 
         for(QuestionDto questionDto: quizDto.getQuestions()) {
             Question question = findQuestionById(quiz, questionDto.getId());
@@ -84,14 +85,27 @@ public class QuizController {
             submittedAnswers.add(
                     new SubmittedAnswer(
                             null,
-                            null,
+                            solve,
                             question,
                             answer
                     )
             );
         }
 
-        Solve solve = new Solve(null, quiz, null, user, correctAnswers, quiz.getQuestions().size(), submittedAnswers, false, null);
+        if(assignmentId != null) {
+            Assignment assignment = assignmentService.read(assignmentId, false);
+            Path path = pathService.read(assignment.getPath().getId());
+
+            if(path.getStudents().stream().noneMatch(user1 -> Objects.equals(user1.getId(), user.getId()))) {
+                throw new StudentNotInClassroom(String.format("Student with id {%d} is not in that classroom.", path.getId()));
+            }
+
+            solve.setAssignment(assignment);
+            assignment.getSolves().add(solve);
+
+            assignmentService.save(assignment);
+        }
+
         solveService.save(solve);
 
         return ResponseEntity.ok(solve);

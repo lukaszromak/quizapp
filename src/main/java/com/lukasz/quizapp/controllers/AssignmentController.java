@@ -23,7 +23,6 @@ public class AssignmentController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
     public ResponseEntity<AssignmentDto> getAssignment(@PathVariable Long id) {
         return ResponseEntity.ok(mapAssignmentToAssignmentDto(assignmentService.read(id, true), true));
     }

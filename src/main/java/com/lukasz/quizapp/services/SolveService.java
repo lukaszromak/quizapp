@@ -5,16 +5,13 @@ import com.lukasz.quizapp.dto.SolveDto;
 import com.lukasz.quizapp.dto.game.UserDto;
 import com.lukasz.quizapp.entities.Solve;
 import com.lukasz.quizapp.entities.User;
-import com.lukasz.quizapp.exception.UnauthorizedException;
 import com.lukasz.quizapp.repositories.SolveRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
+import java.util.Optional;
 
-import static com.lukasz.quizapp.services.QuizService.mapQuizToQuizDto;
 
 @Service
 public class SolveService {
@@ -36,22 +33,35 @@ public class SolveService {
         return this.solveRepository.saveAll(solves);
     }
 
-    public List<Solve> read(Long userId) {
+    public List<Solve> read() {
         User user = authService.getAuthenticatedUser();
 
-        System.out.println(userId);
-        System.out.println(user.getId());
+        return this.solveRepository.findAllByUser(user);
+    }
 
-        if(!user.getId().equals(userId)) {
-            throw new UnauthorizedException("Unauthorized");
+    public Solve read(Long solveId) {
+        Optional<Solve> solveOptional = solveRepository.findById(solveId);
+
+        if(solveOptional.isEmpty()) {
+            throw new RuntimeException("Solve not found");
         }
 
-        return this.solveRepository.findAllByUser(user);
+        return solveOptional.get();
     }
 
     public static List<SolveDto> mapSolveListToSolveDtoList(List<Solve> solves) {
         if(solves == null) return null;
 
-        return solves.stream().map((solve -> new SolveDto(solve.getId(), new QuizDto(solve.getQuiz().getId(), solve.getQuiz().getTitle(), null, null), new UserDto(solve.getUser().getId(), solve.getUser().getUsername()), solve.getCorrectAnswers(), solve.getTotalAnswers(), solve.isWasGame(), solve.getSubmittedAt()))).toList();
+        return solves.stream().map(
+                (solve -> new SolveDto(
+                        solve.getId(),
+                        new QuizDto(solve.getQuiz().getId(), solve.getQuiz().getTitle(), null, null),
+                        new UserDto(solve.getUser().getId(), solve.getUser().getUsername()),
+                        solve.getCorrectAnswers(),
+                        solve.getTotalAnswers(),
+                        solve.getUserAnswers(),
+                        solve.isWasGame(),
+                        solve.getSubmittedAt())
+                )).toList();
     }
 }

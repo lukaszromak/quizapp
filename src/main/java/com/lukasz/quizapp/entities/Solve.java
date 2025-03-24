@@ -1,5 +1,6 @@
 package com.lukasz.quizapp.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lukasz.quizapp.dto.QuestionDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,7 @@ public class Solve {
 
     @ManyToOne
     @JoinColumn(name = "assignment_id")
+    @JsonIgnore
     private Assignment assignment;
 
     @ManyToOne(fetch = FetchType.LAZY)

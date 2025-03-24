@@ -52,7 +52,7 @@ export default function App() {
         <Route path='/pathList' element={<PathList/>}></Route>
         <Route path='/path/details/:id' element={<PathDetails/>}></Route>
         <Route path='/teacher/createAssignment' element={<AssignmentCreate></AssignmentCreate>}></Route>
-        <Route path='/teacher/assignment/details/:id' element={<AssignmentDetails></AssignmentDetails>}></Route>
+        <Route path='/assignment/details/:id' element={<AssignmentDetails></AssignmentDetails>}></Route>
       </Routes>
     </>
   )

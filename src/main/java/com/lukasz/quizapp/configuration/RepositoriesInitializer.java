@@ -256,12 +256,28 @@ public class RepositoriesInitializer {
                 int i = 0;
 
                 for(Quiz quiz : path.getQuizzes()) {
+                    assignments.add(new Assignment(
+                            null,
+                            "Test",
+                            path,
+                            quiz,
+                            null,
+                            Date.from(nowMinus5Days.plusDays(i).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                            Date.from(nowMinus5Days.plusDays(i).atTime(LocalTime.ofSecondOfDay(3600)).atZone(ZoneId.systemDefault()).toInstant()),
+                            i <= 5
+                    ));
+                    i++;
+                }
+
+                assignments = assignmentRepository.saveAll(assignments);
+
+                for(Assignment assignment : assignments) {
                     solves = new ArrayList<>();
-                    Quiz q = quizRepository.findById(quiz.getId()).get();
+                    Quiz q = quizRepository.findById(assignment.getQuiz().getId()).get();
                     for(User user: path.getStudents()) {
                         Solve solve = new Solve();
                         solve.setUser(user);
-                        solve.setQuiz(quiz);
+                        solve.setQuiz(q);
                         if(random.nextBoolean()) {
                             solve.setWasGame(true);
                             solve.setTotalAnswers(q.getQuestions().size() * 10000);
@@ -272,22 +288,11 @@ public class RepositoriesInitializer {
                             solve.setCorrectAnswers(random.nextInt(q.getQuestions().size()));
                         }
                         solves.add(solve);
+                        solve.setAssignment(assignment);
                     }
 
                     List<Solve> savedSolves = solveRepository.saveAll(solves);
-
-                    assignments.add(new Assignment(
-                            null,
-                            "Test",
-                            path,
-                            quiz,
-                            savedSolves,
-                            Date.from(nowMinus5Days.plusDays(i).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                            Date.from(nowMinus5Days.plusDays(i).atTime(LocalTime.ofSecondOfDay(3600)).atZone(ZoneId.systemDefault()).toInstant()),
-                            true
-                    ));
-
-                    i++;
+                    assignment.setSolves(savedSolves);
                 }
 
                 assignmentRepository.saveAll(assignments);

@@ -69,6 +69,11 @@ interface Game {
     started: boolean
 }
 
+interface SubmittedAnswer {
+    question: Question,
+    answer: Answer
+}
+
 interface Solve {
     id: number,
     quiz: Quiz,
@@ -76,7 +81,8 @@ interface Solve {
     correctAnswers: number,
     totalAnswers: number,
     wasGame: boolean,
-    submittedAt: Date
+    submittedAt: Date,
+    userAnswers: Array<SubmittedAnswer>
 }
 
 interface Student {
@@ -122,6 +128,7 @@ export type {
     QuizDto,
     GameEvent,
     Game,
+    SubmittedAnswer,
     Solve,
     Path,
     doExistResponse,
