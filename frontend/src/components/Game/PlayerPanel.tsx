@@ -10,6 +10,7 @@ import { Question } from "types"
 import Button from "components/Misc/Button"
 import { Typography } from "components/Misc/Typography"
 import ErrorMessage from "components/Misc/ErrorMessage"
+import { genericContainerStyle } from "components/Misc/Styles"
 
 //{ id: null, question: "Lubisz spuche?", answers: [{ id: null, content: "Jeszcze jak", isValid: true }, { id: null, content: "nie TROLL", isValid: false }, { id: null, content: "pojebalo cie?", isValid: false },  { id: null, content: "debil...", isValid: false }] }
 
@@ -25,6 +26,7 @@ function PlayerPanel() {
   const [timeToAnswer, setTimeToAnswer] = useState(0)
   const [gameEnded, setGameEnded] = useState(false)
   const [error, setError] = useState("")
+  const [submittedAnswer, setSubmittedAnswer] = useState<number|null>(null)
 
   const connectToWebSocket = (gameId: string): Client => {
     const client = new Client({
@@ -58,6 +60,7 @@ function PlayerPanel() {
               }
               setDisplayScores(false)
               setCurrentQuestion(question)
+              setSubmittedAnswer(null)
               break
             case GameEventType.SCORES_UPDATE:
               const obj = gameEvent.message ? JSON.parse(gameEvent.message) : null
@@ -107,6 +110,7 @@ function PlayerPanel() {
       }
 
       client.publish({ destination: `/app/game/${gameCode}`, body: JSON.stringify(body) })
+      setSubmittedAnswer(answerId)
     } else {
       console.log("No client handle while trying to send answer.")
     }
@@ -179,28 +183,32 @@ function PlayerPanel() {
         :
         <Typography variant="h1">Displaying scores on host panel.</Typography>
       :
-      currentQuestion
-        ?
-        <>
-          <p>{timeToAnswer}</p>
+      <div className={genericContainerStyle}>
+        {currentQuestion
+          ?
+          <>
+            {/* <p>{timeToAnswer}</p>
           <p>{JSON.stringify(scores)}</p>
-          <p>{displayScores ? "DISPLAY" : "NO DISPLAY"}</p>
-          <div className="mx-auto max-w-3xl px-4 py-8 gap-0 columns-2 h-screen">
-            {currentQuestion.answers.map((answer, idx) => (
-              <div className={`flex justify-center items-center border-4 border-gray-800 hover:bg-gray-300 ${idx < 2 && `border-r-0`} ${idx % 2 == 1 && `border-t-0`} h-2/6 text-balance text-center`} key={answer.id} onClick={() => sendAnswer(answer.id)}>
-                <Typography variant="p">{answer.content}</Typography>
-              </div>
-            ))}
-          </div>
-        </>
-        :
-        <BigTextContainer size={1}>
-          <p>{client ? "CLIENT" : "NO CLIENT"}</p>
-          <div>Enter game code</div>
-          <input className="text-center" value={gameCode} onChange={(e) => setGameCode(e.currentTarget.value)} />
-          {error !== "" ? <ErrorMessage>{error}</ErrorMessage> : <p></p>}
-          <Button color="blue" onClick={() => setTryConnect(true)}>enter</Button>
-        </BigTextContainer>
+          <p>{displayScores ? "DISPLAY" : "NO DISPLAY"}</p> */}
+            <Typography variant="h3" className="text-center">Time remaining: {timeToAnswer}</Typography>
+            <div className="mx-auto max-w-3xl px-4 py-8 gap-0 columns-2 h-screen">
+              {currentQuestion.answers.map((answer, idx) => (
+                <div className={`flex justify-center items-center border-4 border-gray-800 ${submittedAnswer == null && "hover:bg-gray-300"} ${submittedAnswer == answer.id && "bg-gray-300"} ${idx < 2 && `border-r-0`} ${idx % 2 == 1 && `border-t-0`} h-2/6 text-balance text-center`} key={answer.id} onClick={() => sendAnswer(answer.id)}>
+                  <Typography variant="p">{answer.content}</Typography>
+                </div>
+              ))}
+
+            </div>
+          </>
+          :
+          <BigTextContainer size={1}>
+            {client ? <p>Connected</p> : <p></p>}
+            <div>Enter game code</div>
+            <input className="text-center" value={gameCode} onChange={(e) => setGameCode(e.currentTarget.value)} />
+            {error !== "" ? <ErrorMessage>{error}</ErrorMessage> : <p></p>}
+            <Button color="blue" onClick={() => setTryConnect(true)}>enter</Button>
+          </BigTextContainer>}
+      </div>
   )
 }
 
