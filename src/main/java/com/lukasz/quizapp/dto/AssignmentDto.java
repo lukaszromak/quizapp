@@ -26,6 +26,6 @@ public class AssignmentDto {
 
     private Date expirationDate;
 
-    private boolean isSynchronous;
+    private Boolean isSynchronous;
 
 }

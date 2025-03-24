@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.util.Date;
 import java.util.Optional;
 
 import static com.lukasz.quizapp.services.SolveService.mapSolveListToSolveDtoList;
@@ -33,7 +34,7 @@ public class AssignmentService {
         this.authService = authService;
     }
 
-    public Assignment read(Long id) {
+    public Assignment read(Long id, boolean modCheck) {
         Optional<Assignment> assignmentOptional = assignmentRepository.findById(id);
 
         if(assignmentOptional.isEmpty()) {
@@ -42,11 +43,15 @@ public class AssignmentService {
 
         Assignment assignment = assignmentOptional.get();
 
-        if(!authService.isModeratorOrAdmin()) {
+        if(modCheck && !authService.isModeratorOrAdmin()) {
             assignment.setSolves(null);
         }
 
         return assignment;
+    }
+
+    public Assignment getReference(Long id) {
+        return assignmentRepository.getReferenceById(id);
     }
 
     public boolean exists(Long id) {
@@ -58,7 +63,19 @@ public class AssignmentService {
     }
 
     public AssignmentDto save(AssignmentDto assignmentDto) throws PathNotFoundException {
-        if((assignmentDto.getStartDate() == null || assignmentDto.getExpirationDate() == null) || assignmentDto.getStartDate().after(assignmentDto.getExpirationDate())) {
+        if(assignmentDto.getIsSynchronous() == null) {
+            throw new RuntimeException("No game type (isSynchronous) provided.");
+        }
+
+        if(assignmentDto.getStartDate() == null) {
+            throw new RuntimeException("No start date provided.");
+        }
+
+        if(new Date().after(assignmentDto.getStartDate())) {
+            throw new RuntimeException("Assignment start date must be in the future.");
+        }
+
+        if(!assignmentDto.getIsSynchronous() && assignmentDto.getStartDate().after(assignmentDto.getExpirationDate())) {
             throw new RuntimeException("Assignment expires before it starts.");
         }
 
@@ -75,29 +92,31 @@ public class AssignmentService {
         assignment.setSolves(null);
 
         assignment.setStartDate(assignmentDto.getStartDate());
-        assignment.setExpirationDate(assignmentDto.getExpirationDate());
-        assignment.setSynchronous(assignmentDto.isSynchronous());
+        if(!assignmentDto.getIsSynchronous()) {
+            assignment.setExpirationDate(assignmentDto.getExpirationDate());
+        }
+        assignment.setSynchronous(assignmentDto.getIsSynchronous());
 
         Assignment savedAssignment = assignmentRepository.save(assignment);
 
-        return mapAssignmentToAssignmentDto(savedAssignment);
+        return mapAssignmentToAssignmentDto(savedAssignment, false);
     }
 
     public Assignment save(Assignment assignment) {
         return assignmentRepository.save(assignment);
     }
 
-    public static AssignmentDto mapAssignmentToAssignmentDto(Assignment assignment) {
+    public static AssignmentDto mapAssignmentToAssignmentDto(Assignment assignment, boolean includeSolves) {
         AssignmentDto assignmentDto = new AssignmentDto();
 
         assignmentDto.setId(assignment.getId());
         assignmentDto.setName(assignment.getName());
         assignmentDto.setPathId(assignment.getPath().getId());
-        assignmentDto.setQuizId(assignment.getPath().getId());
-        assignmentDto.setSolves(mapSolveListToSolveDtoList(assignment.getSolves()));
+        assignmentDto.setQuizId(assignment.getQuiz().getId());
+        assignmentDto.setSolves(includeSolves ? mapSolveListToSolveDtoList(assignment.getSolves()) : null);
         assignmentDto.setExpirationDate(assignment.getExpirationDate());
         assignmentDto.setStartDate(assignment.getStartDate());
-        assignmentDto.setSynchronous(assignment.isSynchronous());
+        assignmentDto.setIsSynchronous(assignment.isSynchronous());
 
         return assignmentDto;
     }

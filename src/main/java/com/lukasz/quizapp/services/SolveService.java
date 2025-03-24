@@ -1,6 +1,8 @@
 package com.lukasz.quizapp.services;
 
+import com.lukasz.quizapp.dto.QuizDto;
 import com.lukasz.quizapp.dto.SolveDto;
+import com.lukasz.quizapp.dto.game.UserDto;
 import com.lukasz.quizapp.entities.Solve;
 import com.lukasz.quizapp.entities.User;
 import com.lukasz.quizapp.exception.UnauthorizedException;
@@ -48,6 +50,8 @@ public class SolveService {
     }
 
     public static List<SolveDto> mapSolveListToSolveDtoList(List<Solve> solves) {
-        return solves.stream().map((solve -> new SolveDto(solve.getId(), solve.getQuiz().getId(), solve.getId(), solve.getCorrectAnswers(), solve.getTotalAnswers(), solve.isWasGame()))).toList();
+        if(solves == null) return null;
+
+        return solves.stream().map((solve -> new SolveDto(solve.getId(), new QuizDto(solve.getQuiz().getId(), solve.getQuiz().getTitle(), null, null), new UserDto(solve.getUser().getId(), solve.getUser().getUsername()), solve.getCorrectAnswers(), solve.getTotalAnswers(), solve.isWasGame(), solve.getSubmittedAt()))).toList();
     }
 }

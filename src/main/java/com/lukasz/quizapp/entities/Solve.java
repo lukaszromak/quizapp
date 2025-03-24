@@ -6,7 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -37,8 +39,12 @@ public class Solve {
 
     private Integer totalAnswers;
 
-    @Transient
-    private List<QuestionDto> userAnswers;
+    @OneToMany(mappedBy = "solve", cascade = CascadeType.ALL)
+    private List<SubmittedAnswer> userAnswers;
 
     private boolean wasGame;
+
+    @CreationTimestamp
+    @Column(updatable = false, nullable = false)
+    private Date submittedAt;
 }

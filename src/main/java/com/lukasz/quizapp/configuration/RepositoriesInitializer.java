@@ -13,6 +13,10 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
@@ -37,6 +41,9 @@ public class RepositoriesInitializer {
 
     @Autowired
     QuizCategoryRepository quizCategoryRepository;
+
+    @Autowired
+    AssignmentRepository assignmentRepository;
 
     @Autowired
     ResourceLoader resourceLoader;
@@ -173,7 +180,7 @@ public class RepositoriesInitializer {
 
         for(int i = 0; i < 3; i++)
         {
-            paths.add(new Path(null, String.format("path%d", i), null, null,null, null));
+            paths.add(new Path(null, String.format("Classroom %d", i + 1), null, null,null, null));
         }
 
         return paths;
@@ -211,8 +218,8 @@ public class RepositoriesInitializer {
                 for(int i = 0; i < 10; i++) {
                     Solve solve = new Solve();
                     solve.setUser(user);
+                    solve.setQuiz(quizzes.get(1));
                     Quiz quiz = quizzes.get(random.nextInt(quizzes.size()));
-                    solve.setQuiz(quiz);
                     if(random.nextBoolean()) {
                         solve.setWasGame(true);
                         solve.setTotalAnswers(quiz.getQuestions().size() * 10000);
@@ -239,6 +246,51 @@ public class RepositoriesInitializer {
                 }
 
                 pathRepository.saveAll(pathList);
+            }
+            if(assignmentRepository.findAll().isEmpty()) {
+                Path path = pathRepository.findById(1L).get();
+                Random random = new Random();
+                List<Solve> solves;
+                List<Assignment> assignments = new ArrayList<>();
+                LocalDate nowMinus5Days = LocalDate.now().minusDays(5);
+                int i = 0;
+
+                for(Quiz quiz : path.getQuizzes()) {
+                    solves = new ArrayList<>();
+                    Quiz q = quizRepository.findById(quiz.getId()).get();
+                    for(User user: path.getStudents()) {
+                        Solve solve = new Solve();
+                        solve.setUser(user);
+                        solve.setQuiz(quiz);
+                        if(random.nextBoolean()) {
+                            solve.setWasGame(true);
+                            solve.setTotalAnswers(q.getQuestions().size() * 10000);
+                            solve.setCorrectAnswers(random.nextInt(q.getQuestions().size() * 10000));
+                        } else {
+                            solve.setWasGame(false);
+                            solve.setTotalAnswers(q.getQuestions().size());
+                            solve.setCorrectAnswers(random.nextInt(q.getQuestions().size()));
+                        }
+                        solves.add(solve);
+                    }
+
+                    List<Solve> savedSolves = solveRepository.saveAll(solves);
+
+                    assignments.add(new Assignment(
+                            null,
+                            "Test",
+                            path,
+                            quiz,
+                            savedSolves,
+                            Date.from(nowMinus5Days.plusDays(i).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                            Date.from(nowMinus5Days.plusDays(i).atTime(LocalTime.ofSecondOfDay(3600)).atZone(ZoneId.systemDefault()).toInstant()),
+                            true
+                    ));
+
+                    i++;
+                }
+
+                assignmentRepository.saveAll(assignments);
             }
         };
     }

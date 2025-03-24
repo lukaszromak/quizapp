@@ -208,14 +208,14 @@ public class GameService {
         Assignment assignment;
 
         if(assignmentService.exists(game.getAssignmentId())) {
-            assignment = assignmentService.read(game.getAssignmentId());
+            assignment = assignmentService.read(game.getAssignmentId(), false);
         } else {
             assignment = null;
         }
 
         game.getScores().entrySet()
                 .forEach((element) -> {
-                    Solve solve = new Solve(null, game.getQuiz(), assignment, userService.read(element.getKey()), element.getValue().intValue(), game.getQuiz().getQuestions().size() * 10000, null, true);
+                    Solve solve = new Solve(null, game.getQuiz(), assignment, userService.read(element.getKey()), element.getValue().intValue(), game.getQuiz().getQuestions().size() * 10000, null, true, null);
                     scores.add(solve);
                 });
 

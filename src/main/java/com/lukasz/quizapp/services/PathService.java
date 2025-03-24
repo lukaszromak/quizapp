@@ -130,6 +130,6 @@ public class PathService {
                 path.getName(),
                 userDtos,
                 quizzesDto,
-                path.getAssignments().stream().map(assignment -> mapAssignmentToAssignmentDto(assignment)).collect(Collectors.toList()));
+                path.getAssignments().stream().map(assignment -> mapAssignmentToAssignmentDto(assignment, false)).collect(Collectors.toList()));
     }
 }

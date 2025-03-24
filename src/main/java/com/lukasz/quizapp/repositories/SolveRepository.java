@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface SolveRepository extends JpaRepository<Solve, Long> {
-    @EntityGraph(attributePaths = {"quiz", "quiz.creator", "quiz.categories"})
+    @EntityGraph(attributePaths = {"quiz", "quiz.creator", "quiz.categories", "user"})
+    List<Solve> findAll();
+    @EntityGraph(attributePaths = {"quiz", "quiz.creator", "quiz.categories", "user"})
     List<Solve> findAllByUser(User user);
 }

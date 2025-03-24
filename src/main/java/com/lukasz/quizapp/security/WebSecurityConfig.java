@@ -66,8 +66,9 @@ public class WebSecurityConfig {
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
                                 .requestMatchers("/error").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/quiz/**").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/quiz/**").authenticated()
+                                //FRONTEND TODO
+//                                .requestMatchers(HttpMethod.GET, "/quiz/**").permitAll()
+//                                .requestMatchers(HttpMethod.POST, "/quiz/**").authenticated()
                                 .requestMatchers("/quizCategory/**").permitAll()
                                 .anyRequest().authenticated()
                 );

@@ -1,9 +1,12 @@
 package com.lukasz.quizapp.dto;
 
+import com.lukasz.quizapp.dto.game.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Date;
 
 @Getter
 @Setter
@@ -13,9 +16,9 @@ public class SolveDto {
 
     private Long id;
 
-    private Long quizId;
+    private QuizDto quiz;
 
-    private Long userId;
+    private UserDto user;
 
     private Integer correctAnswers;
 
@@ -23,4 +26,5 @@ public class SolveDto {
 
     private boolean wasGame;
 
+    private Date submittedAt;
 }

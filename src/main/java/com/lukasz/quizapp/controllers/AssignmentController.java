@@ -1,15 +1,15 @@
 package com.lukasz.quizapp.controllers;
 
 import com.lukasz.quizapp.dto.AssignmentDto;
+import com.lukasz.quizapp.entities.Assignment;
 import com.lukasz.quizapp.exception.PathNotFoundException;
 import com.lukasz.quizapp.services.AssignmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import static com.lukasz.quizapp.services.AssignmentService.mapAssignmentToAssignmentDto;
 
 @RestController
 @RequestMapping("/assignment")
@@ -20,6 +20,12 @@ public class AssignmentController {
     @Autowired
     public AssignmentController(AssignmentService assignmentService) {
         this.assignmentService = assignmentService;
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+    public ResponseEntity<AssignmentDto> getAssignment(@PathVariable Long id) {
+        return ResponseEntity.ok(mapAssignmentToAssignmentDto(assignmentService.read(id, true), true));
     }
 
     @PostMapping

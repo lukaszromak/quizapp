@@ -26,9 +26,7 @@ public class PathController {
 
     @GetMapping("/{id}")
     public PathDto getPath(@PathVariable Long id) throws PathNotFoundException {
-        PathDto aefaef = pathService.mapPathToPathDto(pathService.read(id));
-
-        return aefaef;
+        return pathService.mapPathToPathDto(pathService.read(id));
     }
 
     @PostMapping

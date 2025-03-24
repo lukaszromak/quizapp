@@ -1,6 +1,5 @@
 package com.lukasz.quizapp.dto;
 
-import com.lukasz.quizapp.entities.Quiz;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

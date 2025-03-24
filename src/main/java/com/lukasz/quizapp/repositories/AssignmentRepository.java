@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
-    @EntityGraph(attributePaths = {"solves"})
+    @EntityGraph(attributePaths = {"solves", "solves.user", "solves.quiz"})
     Optional<Assignment> findById(Long id);
 }
