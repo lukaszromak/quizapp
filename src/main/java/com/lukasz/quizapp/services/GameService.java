@@ -1,25 +1,30 @@
 package com.lukasz.quizapp.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.lukasz.quizapp.dto.game.Game;
 import com.lukasz.quizapp.dto.game.GameEvent;
 import com.lukasz.quizapp.dto.game.GameEventType;
+import com.lukasz.quizapp.dto.game.GameStats;
 import com.lukasz.quizapp.entities.*;
 import com.lukasz.quizapp.repositories.QuizRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLOutput;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 @Service
 public class GameService {
@@ -75,7 +80,7 @@ public class GameService {
     public Game getCurrentGame(String username) {
         Optional<Map.Entry<String, Game>> game = games.entrySet()
                 .stream()
-                .filter(gameEntry -> gameEntry.getValue().getScores().containsKey(username))
+                .filter(gameEntry -> gameEntry.getValue().getGameStatsMap().containsKey(username))
                 .findFirst();
 
         if (game.isEmpty()) return null;
@@ -130,14 +135,14 @@ public class GameService {
         return sb.toString();
     }
 
-    public Long addPlayerToGame(String username, String gameCode, String sessionId) {
+    public GameStats addPlayerToGame(String username, String gameCode, String sessionId) {
         Game game = games.get(gameCode);
 
         if (game == null) {
-            return -1L;
+            return null;
         }
 
-        return game.getScores().putIfAbsent(username, 0L);
+        return game.getGameStatsMap().putIfAbsent(username, new GameStats(0L, new ArrayList<>()));
     }
 
     public void nextQuestion(String gameCode) {
@@ -182,8 +187,22 @@ public class GameService {
                     .filter(answer -> answer.getIsValid())
                     .findFirst();
 
-            if (validAnswer.isPresent() && answerId.equals(validAnswer.get().getId()) && game.getCurrentQuestionStartedAt() != null) {
-                game.getScores().computeIfPresent(username, (k, v) -> v + calculatePointsScored(currentQuestion.getTimeToAnswer() >= 0 ? currentQuestion.getTimeToAnswer() : 10, game.getCurrentQuestionStartedAt()));
+            Optional<Answer> userAnswer = currentQuestion
+                    .getAnswers()
+                    .stream()
+                    .filter(answer -> Objects.equals(answer.getId(), answerId))
+                    .findFirst();
+
+            if (game.getCurrentQuestionStartedAt() != null) {
+                game
+                        .getGameStatsMap()
+                        .computeIfPresent(
+                                username,
+                                (k, v) -> {
+                                    v.getSubmittedAnswerList().add(new SubmittedAnswer(null, null, currentQuestion, userAnswer.get()));
+                                    return new GameStats(v.getScore() + calculatePointsScored(currentQuestion.getTimeToAnswer() >= 0 ? currentQuestion.getTimeToAnswer() : 10, game.getCurrentQuestionStartedAt()), v.getSubmittedAnswerList());
+                                }
+                        );
                 return true;
             }
         }
@@ -213,9 +232,10 @@ public class GameService {
             assignment = null;
         }
 
-        game.getScores().entrySet()
+        game.getGameStatsMap().entrySet()
                 .forEach((element) -> {
-                    Solve solve = new Solve(null, game.getQuiz(), assignment, userService.read(element.getKey()), element.getValue().intValue(), game.getQuiz().getQuestions().size() * 10000, null, true, null);
+                    Solve solve = new Solve(null, game.getQuiz(), assignment, userService.read(element.getKey()), element.getValue().getScore().intValue(), game.getQuiz().getQuestions().size() * 10000, element.getValue().getSubmittedAnswerList(), true, null);
+                    element.getValue().getSubmittedAnswerList().stream().forEach(e -> e.setSolve(solve));
                     scores.add(solve);
                 });
 
@@ -234,7 +254,10 @@ public class GameService {
         @Override
         public void run() {
             try {
-                template.convertAndSend(String.format("/topic/%s", game.getGameCode()), new GameEvent(GameEventType.SCORES_UPDATE, null, objectMapper.writeValueAsString(game.getScores())));
+                template.convertAndSend(String.format(
+                        "/topic/%s",
+                        game.getGameCode()),
+                        new GameEvent(GameEventType.SCORES_UPDATE, null, objectMapper.writeValueAsString(NextQuestionTask.flatGameStatsMapToScoresMap(game.getGameStatsMap()))));
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
@@ -262,7 +285,7 @@ public class GameService {
                     if (game.getCurrentQuestion() >= game.getQuiz().getQuestions().size()) {
                         future.cancel(true);
                         games.remove(game.getGameCode());
-                        template.convertAndSend(String.format("/topic/%s", game.getGameCode()), new GameEvent(GameEventType.END_GAME, null, objectMapper.writeValueAsString(game.getScores())));
+                        template.convertAndSend(String.format("/topic/%s", game.getGameCode()), new GameEvent(GameEventType.END_GAME, null, objectMapper.writeValueAsString(flatGameStatsMapToScoresMap(game.getGameStatsMap()))));
                         saveScores(game);
                         return;
                     }
@@ -274,20 +297,21 @@ public class GameService {
                     }
 
                     Question question = game.getQuiz().getQuestions().get(game.getCurrentQuestion());
+                    Optional<Answer> validAnswer = question.getAnswers().stream().filter(Answer::getIsValid).findFirst();
                     question.setTimeToAnswer(cooldown);
 
                     if(game.getAnswerTopic() != null) {
                         logger.debug(String.format("Sending answer to host on topic /user/%s/queue/reply", game.getAnswerTopic()));
-                        Optional<Answer> validAnswer = question.getAnswers().stream().filter(Answer::getIsValid).findFirst();
                         validAnswer.ifPresent(answer -> template.convertAndSendToUser(game.getAnswerTopic(), "/queue/reply", new GameEvent(GameEventType.ANSWER, null, answer.getContent()), createSpecificUserHeaders(game.getAnswerTopic())));
                     } else {
                         logger.debug("Answer topic was null when tried to send answer to host");
                     }
                     game.setCurrentQuestionStartedAt(System.currentTimeMillis());
-                    template.convertAndSend(String.format("/topic/%s", game.getGameCode()), new GameEvent(GameEventType.NEW_QUESTION, null, objectMapper.writeValueAsString(question)));
+                    template.convertAndSend(String.format("/topic/%s", game.getGameCode()), new GameEvent(GameEventType.NEW_QUESTION, null, objectMapper.writeValueAsString(question).replaceAll("\"isValid\":true", "\"isValid\":false")));
 
                     game.setCurrentQuestion(game.getCurrentQuestion() + 1);
                     game.setAnsweredCurrentQuestion(new ArrayList<>());
+                    scheduler.schedule(() -> template.convertAndSend(String.format("/topic/%s", game.getGameCode()), new GameEvent(GameEventType.ANSWER, null, validAnswer.isPresent() ? validAnswer.get().getContent() : null)), cooldown, TimeUnit.SECONDS);
                     scheduler.schedule(new NextQuestionTask(game, template, objectMapper, future), cooldown + DELAY_BETWEEN_QUESTIONS, TimeUnit.SECONDS);
 
                     logger.debug("Next question sent");
@@ -304,6 +328,16 @@ public class GameService {
             accessor.setLeaveMutable(true);
 
             return accessor.getMessageHeaders();
+        }
+
+        private static Map<String, Long> flatGameStatsMapToScoresMap(Map<String, GameStats> gameStatsMap) {
+            return gameStatsMap.entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            entry -> entry.getValue().getScore()
+                            )
+                    );
         }
     }
 }

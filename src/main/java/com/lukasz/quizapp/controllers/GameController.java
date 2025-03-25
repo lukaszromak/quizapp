@@ -3,6 +3,7 @@ package com.lukasz.quizapp.controllers;
 import com.lukasz.quizapp.dto.game.Game;
 import com.lukasz.quizapp.dto.game.GameEvent;
 import com.lukasz.quizapp.dto.game.GameEventType;
+import com.lukasz.quizapp.dto.game.GameStats;
 import com.lukasz.quizapp.entities.User;
 import com.lukasz.quizapp.services.AuthService;
 import com.lukasz.quizapp.services.GameService;
@@ -77,11 +78,9 @@ public class GameController {
 
         switch (gameMessage.getEventType()) {
             case PLAYER_JOINED_GAME -> {
-                Long result = gameService.addPlayerToGame(username, gameId, sessionId);
+                GameStats result = gameService.addPlayerToGame(username, gameId, sessionId);
 
                 if(result == null) {
-                    return new GameEvent(GameEventType.PLAYER_JOINED_GAME, username);
-                } else if(result == -1) {
                     return new GameEvent(GameEventType.PLAYER_JOINED_GAME, username);
                 } else {
                     return new GameEvent(GameEventType.PLAYER_RECONNECTED, username);

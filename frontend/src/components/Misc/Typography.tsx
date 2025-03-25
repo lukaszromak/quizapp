@@ -39,7 +39,7 @@ const sizes: Record<Variant, string> = {
   body: "text-lg sm:text-md",
   "body-small": "text-md sm:text-sm",
   small: "text-sm sm:text-xs",
-  p: "text-xl font-medium"
+  p: "text-base font-medium"
 };
 
 export const Typography = ({ variant, children, className, as }: Props) => {

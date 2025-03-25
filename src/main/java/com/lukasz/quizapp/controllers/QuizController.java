@@ -59,6 +59,10 @@ public class QuizController {
     public ResponseEntity<Quiz> getQuiz(@PathVariable Long id) {
         Quiz quiz = quizService.read(id);
 
+        if(!authService.isModeratorOrAdmin()) {
+            quizService.nullifyIsValid(quiz);
+        }
+
         return ResponseEntity.ok(quiz);
     }
 

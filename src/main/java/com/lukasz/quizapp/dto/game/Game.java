@@ -2,6 +2,7 @@ package com.lukasz.quizapp.dto.game;
 
 import com.lukasz.quizapp.entities.Assignment;
 import com.lukasz.quizapp.entities.Quiz;
+import com.lukasz.quizapp.entities.SubmittedAnswer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,7 +31,7 @@ public class Game {
 
     private Long currentQuestionStartedAt;
 
-    private Map<String, Long> scores;
+    private Map<String, GameStats> gameStatsMap;
 
     private List<String> answeredCurrentQuestion;
 
@@ -43,7 +44,7 @@ public class Game {
         this.quiz = quiz;
         this.assignmentId = assignmentId;
         this.currentQuestion = 0;
-        this.scores = new ConcurrentHashMap<>();
+        this.gameStatsMap = new ConcurrentHashMap<>();
         this.answeredCurrentQuestion = new ArrayList<>();
         this.started = false;
     }

@@ -21,6 +21,7 @@ function PathCreate() {
   const [searchByTitle, setSearchByTitle] = useState("")
   const [studentsList, setStudentsList] = useState<Student[]>([])
   const [submitError, setSubmitError] = useState("")
+  const [noQuizzesFound, setNoQuizzesFound] = useState("")
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
@@ -45,6 +46,7 @@ function PathCreate() {
   }
 
   const searchQuizes = async () => {
+    setNoQuizzesFound("")
     let url = '/quiz'
 
     if (searchByTitle && searchByTitle !== "") {
@@ -63,6 +65,10 @@ function PathCreate() {
         if (_quizes.findIndex(quiz => quiz.id == searchedQuizes[i].id) === -1) {
           _quizes.push(searchedQuizes[i])
         }
+      }
+
+      if (searchedQuizes.length === 0) {
+        setNoQuizzesFound("No quizzes found.")
       }
 
       setQuizes(_quizes)
@@ -85,34 +91,11 @@ function PathCreate() {
     }
   }
 
-  const moveQuiz = (idx: number | null, moveUp: boolean) => {
-    if (!idx && idx !== 0) return
-
-    const _selectedQuizes = [...selectedQuizes]
-    let tmp
-    console.log(idx)
-    if (moveUp) {
-      if (idx - 1 >= 0 && idx < _selectedQuizes.length) {
-        tmp = _selectedQuizes[idx - 1]
-        _selectedQuizes[idx - 1] = _selectedQuizes[idx]
-        _selectedQuizes[idx] = tmp
-      }
-    } else {
-      if (idx + 1 < _selectedQuizes.length && idx >= 0) {
-        tmp = _selectedQuizes[idx + 1]
-        _selectedQuizes[idx + 1] = _selectedQuizes[idx]
-        _selectedQuizes[idx] = tmp
-      }
-    }
-    console.log(_selectedQuizes)
-    setSelectedQuizes(_selectedQuizes)
-  }
-
   const handleSubmit = async () => {
     const path: Path = {
       id: null,
       name: name,
-      students: studentsList.map((student) => ({ id: student.id})),
+      students: studentsList.map((student) => ({ id: student.id })),
       quizzes: selectedQuizes,
       teachers: [],
       assignments: []
@@ -129,44 +112,46 @@ function PathCreate() {
 
   return (
     <div className={genericContainerStyle}>
-      <Typography variant="h1" className="text-center">Create class</Typography>
-      <Typography variant="p">Class name</Typography>
-      <input type="text" placeholder="Programming class" value={name} onInput={(e) => setName(e.currentTarget.value)} className={genericTextInputStyle} />
-      {ownQuizes.length > 0 && <Typography variant="h3">Select quizzes to include in class</Typography>}
-      {ownQuizes.map((quiz => (
-        selectedQuizes.findIndex(q => q.id == quiz.id) === -1 &&
-        <div key={`own${quiz.id}`} className={genericListItemStyle} draggable="true">
-          <button onClick={() => navigate(`/quiz/details/${quiz.id}`)} className="mr-1">{quiz.title}</button>
-          <input type="checkbox" onChange={(e) => handleSelect(quiz.id, e.currentTarget.checked)} checked={selectedQuizes.findIndex(q => q.id == quiz.id) !== -1} className="p-2" />
-        </div>
-      )))}
-      <Typography variant="h3">{ownQuizes.length > 0 ? "Search for other quizzes" : "Search and select quizzes to include in class"}</Typography>
-      <input type="text" placeholder="React basics" value={searchByTitle} onInput={(e) => setSearchByTitle(e.currentTarget.value)} className={genericTextInputStyle} />
-      <Button color="blue" style="block" onClick={() => searchQuizes()}>Search</Button>
-      {quizes.map((quiz => (
-        selectedQuizes.findIndex(q => q.id == quiz.id) === -1 &&
-        <div key={quiz.id} className={genericListItemStyle} draggable="true">
-          <button onClick={() => navigate(`/quiz/details/${quiz.id}`)} className="mr-1">{quiz.title}</button>
-          <input type="checkbox" onChange={(e) => handleSelect(quiz.id, e.currentTarget.checked)} checked={selectedQuizes.findIndex(q => q.id == quiz.id) !== -1} className="p-2" />
-        </div>
-      )))}
-      <Typography variant="h3">Selected quizzes</Typography>
-      {selectedQuizes.length === 0 ? <div className={genericListItemStyle}><Typography variant="p">Here will appear quizes you want to include in your class</Typography></div> :
-        selectedQuizes.map(((quiz, idx) => (
-          <div key={quiz.id} className={genericListItemStyle} draggable="true">
-            <span className="mr-3">
-              <ChevronUpIcon className="h-6 w-6 hover:cursor-pointer" onClick={() => moveQuiz(idx, true)} />
-              <ChevronDownIcon className="h-6 w-6 hover:cursor-pointer" onClick={() => moveQuiz(idx, false)} />
-            </span>
-            <span className="flex content-center">
-              <button onClick={() => navigate(`/quiz/details/${quiz.id}`)} className="mr-1">{quiz.title}</button>
-              <input type="checkbox" onChange={(e) => handleSelect(quiz.id, e.currentTarget.checked)} checked={selectedQuizes.findIndex(q => q.id == quiz.id) !== -1} className="p-2" />
-            </span>
+      <Typography variant="h1" className="text-center mb-5">Create class</Typography>
+      <div className="border border-gray-400 rounded-md shadow-md p-4 mb-3">
+        <Typography variant="h4">Selected Quizzes</Typography>
+        {selectedQuizes.length === 0 ? <div className={genericListItemStyle}><p>Here will appear selected quizzes</p></div> :
+          selectedQuizes.map(((quiz, idx) => (
+            <div key={quiz.id} className={genericListItemStyle} draggable="true">
+              <span className="flex content-center">
+                <button onClick={() => navigate(`/quiz/details/${quiz.id}`)} className="mr-1">{quiz.title}</button>
+                <input type="checkbox" onChange={(e) => handleSelect(quiz.id, e.currentTarget.checked)} checked={selectedQuizes.findIndex(q => q.id == quiz.id) !== -1} className="p-2" />
+              </span>
+            </div>
+          )))}
+        {ownQuizes.length > 0 && <Typography variant="h4">Your quizzes</Typography>}
+        {ownQuizes.map((quiz => (
+          selectedQuizes.findIndex(q => q.id == quiz.id) === -1 &&
+          <div key={`own${quiz.id}`} className={genericListItemStyle} draggable="true">
+            <button onClick={() => navigate(`/quiz/details/${quiz.id}`)} className="mr-1">{quiz.title}</button>
+            <input type="checkbox" onChange={(e) => handleSelect(quiz.id, e.currentTarget.checked)} checked={selectedQuizes.findIndex(q => q.id == quiz.id) !== -1} className="p-2" />
           </div>
         )))}
-      <AddStudent studentsList={studentsList} setStudentsList={setStudentsList}></AddStudent>
+        {quizes.length > 0 && <><Typography variant="h4" className="mt-3">Found Quizzes</Typography></>}
+        {quizes.map((quiz => (
+          selectedQuizes.findIndex(q => q.id == quiz.id) === -1 &&
+          <div key={quiz.id} className={genericListItemStyle}>
+            <button onClick={() => navigate(`/quiz/details/${quiz.id}`)} className="mr-1">{quiz.title}</button>
+            <input type="checkbox" onChange={(e) => handleSelect(quiz.id, e.currentTarget.checked)} checked={selectedQuizes.findIndex(q => q.id == quiz.id) !== -1} className="p-2" />
+          </div>
+        )))}
+        <Typography variant="p" className="mb-1">{ownQuizes.length > 0 ? "Search for other quizzes" : "Search and select quizzes to include in class"}</Typography>
+        <input type="text" placeholder="React basics" value={searchByTitle} onInput={(e) => setSearchByTitle(e.currentTarget.value)} className={`${genericTextInputStyle}`} />
+        <ErrorMessage>{noQuizzesFound}</ErrorMessage>
+        <Button color="green" style="block mt-2" onClick={() => searchQuizes()}>Search</Button>
+      </div>
+      <div className="border border-gray-400 rounded-md shadow-md p-5 mb-3">
+        <AddStudent studentsList={studentsList} setStudentsList={setStudentsList}></AddStudent>
+      </div>
+      <Typography variant="p">Class name</Typography>
+      <input type="text" placeholder="Programming class" value={name} onInput={(e) => setName(e.currentTarget.value)} className={`${genericTextInputStyle} mb-3`} />
       {submitError !== "" && <ErrorMessage>{submitError}</ErrorMessage>}
-      <Button color="blue" style="block" onClick={() => handleSubmit()}>Submit</Button>
+      <Button color="blue" style="block w-full" onClick={() => handleSubmit()}>Create class</Button>
     </div>
   )
 }

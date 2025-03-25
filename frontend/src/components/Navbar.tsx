@@ -166,6 +166,7 @@ export default function Navbar() {
       <DisclosurePanel className="sm:hidden">
         <div className="space-y-1 px-2 pb-3 pt-2">
           {navigation.map((item) => (
+            (!item.roles || (authUser?.roles && canSeeLink(authUser?.roles, item.roles)))  &&
             <DisclosureButton
               key={item.name}
               as="a"

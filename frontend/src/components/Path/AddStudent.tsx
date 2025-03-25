@@ -54,17 +54,17 @@ function AddStudent(props: AddStudentProps) {
 
   return (
     <>
-      <Typography variant="h3">Students</Typography>
-      {studentList.length == 0 && <div className={genericListItemStyle}><Typography variant="p">Here will appear added students</Typography></div>}
+      <Typography variant="h4">Students</Typography>
+      {studentList.length == 0 && <div className={genericListItemStyle}><p>Here will appear added students</p></div>}
       {studentList.map(((student, idx) => (
         <div key={student.id} className={genericListItemStyle} draggable="true">
           {student.username}
         </div>
       )))}
-      <Typography variant="p" className="mb-2">add students by their username, email or id</Typography>
-      <input type="text" placeholder="lukaszromak" value={studentText} onInput={(e) => setStudentText(e.currentTarget.value)} className={`${genericTextInputStyle} mb-2`}></input>
+      <Typography variant="p" className="mb-1">add students by their username, email or id</Typography>
+      <input type="text" placeholder="lukaszromak" value={studentText} onInput={(e) => setStudentText(e.currentTarget.value)} className={`${genericTextInputStyle}`}></input>
       {addUserError.length > 0 && <ErrorMessage>{addUserError}</ErrorMessage>}
-      <Button color="blue" style="block mb-2" onClick={() => addUser()}>Add</Button>
+      <Button color="green" style="block mt-2" onClick={() => addUser()}>Add</Button>
     </>
   )
 }

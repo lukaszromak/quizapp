@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useParams } from "react-router-dom"
 import { Client } from "@stomp/stompjs"
 import { useLocation } from "react-router-dom"
@@ -12,6 +12,7 @@ import { Typography } from "components/Misc/Typography"
 import UsernamesDisplay from "./UsernamesDisplay"
 import { axiosPublic } from "misc/utils"
 import ScoresDisplay from "./ScoresDisplay"
+import { genericContainerStyle } from "components/Misc/Styles"
 
 function HostPanel() {
   const { id } = useParams()
@@ -28,6 +29,7 @@ function HostPanel() {
   const [answersTopic, setAnswerTopic] = useState("")
   const [error, setError] = useState("")
   const location = useLocation()
+  const divRef = useRef<HTMLInputElement>(null)
 
   const connectToWebSocket = (gameId: string): Client => {
     const client = new Client({
@@ -40,7 +42,7 @@ function HostPanel() {
 
         client.subscribe(`/user/${answersTopic}/queue/reply`, message => {
           const gameEvent = JSON.parse(message.body) as GameEvent
-          if(gameEvent.message) setCurrentAnswer(gameEvent.message)
+          if (gameEvent.message) setCurrentAnswer(gameEvent.message)
         })
 
         client.subscribe(`/topic/${gameId}`, message => {
@@ -108,17 +110,17 @@ function HostPanel() {
         const questionElapsedTime = Math.floor((Date.now() - game.currentQuestionStartedAt) / 1000)
         const currentQuestion = game.quiz.questions[game.currentQuestion - 1]
 
-        game.scores = new Map(Object.entries(game.scores))
+        game.scores = new Map()
         setGameCode(game.gameCode)
         console.log(game.answerTopic)
         setAnswerTopic(game.answerTopic)
         setPlayers(Array.from(game.scores.keys()))
 
-        if(!currentQuestion) return
+        if (!currentQuestion) return
 
         const currentQuestionTimeToAnswer = (!currentQuestion.timeToAnswer || currentQuestion.timeToAnswer == 0) ? 10 : currentQuestion.timeToAnswer
 
-        if(questionElapsedTime >= currentQuestionTimeToAnswer) {
+        if (questionElapsedTime >= currentQuestionTimeToAnswer) {
           setDisplayScores(true)
         } else {
           setCurrentQuestion(currentQuestion)
@@ -176,11 +178,16 @@ function HostPanel() {
   }, [timeToAnswer])
 
   useEffect(() => {
+    if (divRef) {
+      divRef.current?.scrollIntoView({ behavior: "smooth" })
+    }
+
     createGame()
   }, [])
 
   return (
-    (gameEnded || displayScores)
+    <div className={genericContainerStyle} ref={divRef}>
+      {(gameEnded || displayScores)
       ?
       <>
         <BigTextContainer>
@@ -190,21 +197,22 @@ function HostPanel() {
       </>
       :
       currentQuestion ?
-        <BigTextContainer size={1}>
-          {currentQuestion.imagePath ? <img src={`${config.url.STORAGE_BASE_URL}${currentQuestion.imagePath}`}/> : <></>}
-          <Typography variant="h1">{currentQuestion.question}</Typography>
-          <ScoresDisplay scores={scores} />
-          <span></span>
-        </BigTextContainer>
-        :
-        <BigTextContainer size={1}>
-          {client ? <p>{location?.state?.assignmentName && `${location.state.assignmentName}`}</p> : <p>"Connecting..."</p>}
-          <div className="text-center">Enter this code to join</div>
-          <div className="mb-5">{gameCode}</div>
-          <UsernamesDisplay usernames={players} />
-          <div className="text-center mb-5">{lastMessage}</div>
-          <Button color="blue" onClick={() => startGame()}>START QUIZ</Button>
-        </BigTextContainer>
+      <BigTextContainer size={1}>
+        {currentQuestion.imagePath ? <img src={`${config.url.STORAGE_BASE_URL}${currentQuestion.imagePath}`} /> : <></>}
+        <Typography variant="h1">{currentQuestion.question}</Typography>
+        <ScoresDisplay scores={scores} />
+        <span></span>
+      </BigTextContainer>
+      :
+      <BigTextContainer size={1}>
+        {client ? <p className="text-center">{location?.state?.assignmentName && `${location.state.assignmentName}`}</p> : <p>"Connecting..."</p>}
+        <div className="text-center">Enter this code to join</div>
+        <div className="mb-5">{gameCode}</div>
+        <UsernamesDisplay usernames={players} />
+        <div className="text-center mb-5">{lastMessage}</div>
+        <Button color="blue" onClick={() => startGame()}>START QUIZ</Button>
+      </BigTextContainer>}
+    </div>
   )
 }
 

@@ -33,7 +33,7 @@ function AnswersDisplay({ handleInput, quizQuestions, submittedAnswers }: Answer
             <div key={answer.id}>
               {submittedAnswers //WithUserAnswers case
                 ?
-                <div className={ answer.isValid ? "bg-green-500" : submittedAnswers.find(submittedAnswer => submittedAnswer.question.id === question.id)?.answer.id === answer.id ? "bg-red-500" : "" }>
+                <div className={ answer.isValid ? "bg-green-500" : (submittedAnswers.find(submittedAnswer => submittedAnswer.question.id === question.id)?.answer.id === answer.id && question.answers.findIndex(a => a.isValid) !== -1) ? "bg-red-500" : "" }>
                   <input type="radio" checked={ submittedAnswers.find(submittedAnswer => submittedAnswer.question.id === question.id)?.answer.id === answer.id } readOnly></input>
                   <label htmlFor="">{answer.content}</label>
                 </div>
