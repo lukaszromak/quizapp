@@ -21,7 +21,9 @@ function AssignmentCreate() {
     solves: [],
     startDate: new Date(),
     expirationDate: new Date(),
-    isSynchronous: true
+    isSynchronous: true,
+    allowAsynchronousSubmission: false,
+    allowSubmitAfterExpiration: false
   })
   const [submitError, setSubmitError] = useState("")
   const [dateError, setDateError] = useState("")

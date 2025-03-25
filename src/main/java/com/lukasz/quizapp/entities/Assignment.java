@@ -41,4 +41,8 @@ public class Assignment {
     private Date expirationDate;
 
     private boolean isSynchronous;
+
+    private boolean allowAsynchronousSubmission = false;
+
+    private boolean allowSubmitAfterExpiration = false;
 }

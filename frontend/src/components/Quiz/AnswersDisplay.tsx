@@ -22,7 +22,6 @@ type WithIsValid = {
 type AnswersParams = WithHandleInput | WithUserAnswers | WithIsValid;
 
 function AnswersDisplay({ handleInput, quizQuestions, submittedAnswers }: AnswersParams) {
-  console.log(submittedAnswers)
   return (
     quizQuestions.map((question) => {
       return (

@@ -33,4 +33,9 @@ public class AssignmentController {
         return ResponseEntity.ok(assignmentService.save(assignmentDto));
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+    public ResponseEntity<AssignmentDto> updateAssignment(@RequestBody AssignmentDto assignmentDto) {
+        return ResponseEntity.ok(assignmentService.update(assignmentDto));
+    }
 }

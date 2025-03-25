@@ -264,7 +264,9 @@ public class RepositoriesInitializer {
                             null,
                             Date.from(nowMinus5Days.plusDays(i).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                             Date.from(nowMinus5Days.plusDays(i).atTime(LocalTime.ofSecondOfDay(3600)).atZone(ZoneId.systemDefault()).toInstant()),
-                            true
+                            true,
+                            false,
+                            false
                     ));
                     i++;
                 }
