@@ -1,23 +1,31 @@
 package com.lukasz.quizapp.services;
 
+import com.lukasz.quizapp.dto.game.UserDto;
+import com.lukasz.quizapp.entities.Role;
 import com.lukasz.quizapp.entities.User;
+import com.lukasz.quizapp.repositories.RoleRepository;
 import com.lukasz.quizapp.repositories.UserRepository;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
 
+    private final RoleRepository roleRepository;
+
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     public User read(Long id) {
@@ -70,5 +78,29 @@ public class UserService {
 
     public User save(User user) {
         return userRepository.save(user);
+    }
+
+    public User update(UserDto userDto) {
+        User user = read(userDto.getId());
+        Set<Role> roles = new HashSet<>();
+
+        for(Role role: userDto.getRoles()) {
+            roles.add(roleRepository.findByName(role.getName()).get());
+        }
+
+        user.setRoles(roles);
+        user.setAccountLocked(userDto.getAccountLocked());
+
+        return userRepository.save(user);
+    }
+
+    public Page<User> readAll(Integer page, String searchText) {
+        PageRequest pageable = PageRequest.of(page, 20);
+
+        if(searchText != null && !searchText.equals("")) {
+            return userRepository.findAllByUsernameContainingOrEmailContaining(searchText, searchText, pageable);
+        }
+
+        return userRepository.findAll(pageable);
     }
 }

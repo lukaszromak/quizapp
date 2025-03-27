@@ -1,3 +1,13 @@
+interface User {
+    id: number,
+    expiresAt: number,
+    email: string,
+    roles: Array<string>,
+    type: string,
+    username: string
+    accountLocked: boolean
+}
+
 interface Answer {
     id: number|null,
     content: string,
@@ -121,6 +131,7 @@ export {
 }
 
 export type {
+    User,
     Answer,
     Question,
     QuizCategory,

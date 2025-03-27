@@ -22,6 +22,7 @@ import PathDetails from 'components/Path/PathDetails';
 import PathList from 'components/Path/PathList';
 import AssignmentCreate from 'components/Assignment/AssignmentCreate';
 import AssignmentDetails from 'components/Assignment/AssignmentDetails';
+import UserList from 'components/Admin/UserList';
 
 export default function App() {
   // init custom history object to allow navigation from 
@@ -53,6 +54,7 @@ export default function App() {
         <Route path='/path/details/:id' element={<PathDetails/>}></Route>
         <Route path='/teacher/createAssignment' element={<AssignmentCreate></AssignmentCreate>}></Route>
         <Route path='/assignment/details/:id' element={<AssignmentDetails></AssignmentDetails>}></Route>
+        <Route path='/admin/userList' element={<UserList></UserList>}></Route>
       </Routes>
     </>
   )

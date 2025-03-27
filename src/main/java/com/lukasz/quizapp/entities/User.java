@@ -23,18 +23,16 @@ public class User {
     private String username;
 
     @Column(unique = true, length = 100, nullable = false)
-    @JsonIgnore
     private String email;
 
     @Column(nullable = false)
     @JsonIgnore
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    @JsonIgnore
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(
@@ -44,6 +42,5 @@ public class User {
     private Set<Quiz> quizzes;
 
     @Column(nullable = false)
-    @JsonIgnore
     private boolean accountLocked;
 }

@@ -3,15 +3,19 @@ package com.lukasz.quizapp.controllers;
 import com.lukasz.quizapp.dto.PathDto;
 import com.lukasz.quizapp.dto.SolveDto;
 import com.lukasz.quizapp.dto.doExistResponse;
+import com.lukasz.quizapp.dto.game.UserDto;
 import com.lukasz.quizapp.entities.Path;
 import com.lukasz.quizapp.entities.Quiz;
 import com.lukasz.quizapp.entities.Solve;
 import com.lukasz.quizapp.entities.User;
 import com.lukasz.quizapp.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 import static com.lukasz.quizapp.services.PathService.mapPathsListToPathDtoList;
@@ -84,5 +88,18 @@ public class UserController {
        }
 
        return new doExistResponse(null, null, false);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public User updateUser(@RequestBody UserDto userDto) {
+        return userService.update(userDto);
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public Page<User> getUsers(@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+                               @RequestParam(name = "searchText", required = false, defaultValue = "") String searchText) {
+        return userService.readAll(page, searchText);
     }
 }

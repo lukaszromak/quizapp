@@ -14,7 +14,8 @@ const _navigation = [
   { name: 'Create quiz', href: '/quiz/createQuiz'},
   { name: 'Quizzes', href: '/quizList'},
   { name: 'Create path', href: '/teacher/createPath', roles: ['ROLE_MODERATOR', 'ROLE_ADMIN'] },
-  { name: 'Path', href: '/pathList'}
+  { name: 'Path', href: '/pathList'},
+  { name: 'Users', href: '/admin/userList', roles: ['ROLE_ADMIN']}
 ]
 
 

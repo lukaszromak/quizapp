@@ -121,7 +121,7 @@ public class PathService {
         List<UserDto> userDtos = null;
 
         if(authService.isModeratorOrAdmin()) {
-            userDtos = path.getStudents().stream().map(student -> new UserDto(student.getId(), student.getUsername())).collect(Collectors.toList());
+            userDtos = path.getStudents().stream().map(student -> new UserDto(student.getId(), student.getUsername(), null, null)).collect(Collectors.toList());
             quizzesDto = path.getQuizzes().stream().map(quiz -> new QuizDto(quiz.getId(), quiz.getTitle(), null, null)).collect(Collectors.toList());
         }
 

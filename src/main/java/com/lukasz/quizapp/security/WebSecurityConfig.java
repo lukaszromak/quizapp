@@ -70,6 +70,7 @@ public class WebSecurityConfig {
 //                                .requestMatchers(HttpMethod.GET, "/quiz/**").permitAll()
 //                                .requestMatchers(HttpMethod.POST, "/quiz/**").authenticated()
                                 .requestMatchers("/quizCategory/**").permitAll()
+                                .requestMatchers("/quiz/images/**").permitAll()
                                 .anyRequest().authenticated()
                 );
         http.cors(Customizer.withDefaults());

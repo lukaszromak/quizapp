@@ -1,16 +1,7 @@
 import { createAsyncThunk, createReducer, createSlice } from '@reduxjs/toolkit';
 
 import { axiosPrivate, axiosPublic } from '../misc/utils';
-import { history } from '../helpers/history';
-
-interface User {
-    id: number,
-    expiresAt: number,
-    email: string,
-    roles: Array<string>,
-    type: string,
-    username: string
-}
+import { User } from 'types';
 
 interface AuthState {
     user: User | null,

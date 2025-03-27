@@ -12,6 +12,7 @@ import { Typography } from "components/Misc/Typography"
 import ErrorMessage from "components/Misc/ErrorMessage"
 import { genericContainerStyle } from "components/Misc/Styles"
 import ScoresDisplay from "./ScoresDisplay"
+import { config } from "misc/constants"
 
 // {"id": null,
 //   "question": "Which country is home to the Great Barrier Reef?",
@@ -212,11 +213,13 @@ function PlayerPanel() {
             {/* <p>{timeToAnswer}</p>
           <p>{JSON.stringify(scores)}</p>
           <p>{displayScores ? "DISPLAY" : "NO DISPLAY"}</p> */}
+            {currentQuestion.imagePath ? <img src={`${config.url.STORAGE_BASE_URL}${currentQuestion.imagePath}`} className="mx-auto"/> : <></>}
             <Typography variant="h3" className="text-center">{currentQuestion.question}</Typography>
             <Typography variant="h3" className="text-center">Time remaining: {timeToAnswer}s</Typography>
             <div className="mx-auto max-w-3xl px-4 py-8 gap-0 columns-2 h-screen max-h-[75vh]">
               {currentQuestion.answers.map((answer, idx) => (
-                <div className={`flex h-1/2 justify-center items-center border-4 border-gray-800 ${submittedAnswer == null && "hover:bg-gray-300"} ${submittedAnswer == answer.id && "bg-gray-300"} ${idx < 2 && `border-r-0`} ${idx % 2 == 1 && `border-t-0`} h-2/6 text-balance text-center`} key={answer.id} onClick={() => sendAnswer(answer.id)}>
+                //haha lol {${idx < 2 && `border-r-0`} ${idx % 2 == 1 && `border-t-0`} h-2/6 text-balance text-center}
+                <div className={`flex h-1/2 justify-center items-center border-4 border-gray-800 ${submittedAnswer == null && "hover:bg-gray-300"} ${submittedAnswer == answer.id && "bg-gray-300"}`} key={answer.id} onClick={() => sendAnswer(answer.id)}>
                   <Typography variant="p">{answer.content}</Typography>
                 </div>
               ))}
@@ -224,7 +227,7 @@ function PlayerPanel() {
           </>
           :
           <BigTextContainer size={1}>
-            {client ? <p>Connected</p> : <p></p>}
+            {(client && error === "") ? <p>Connected</p> : <p></p>}
             <div>Enter game code</div>
             <input className="text-center" value={gameCode} onChange={(e) => setGameCode(e.currentTarget.value)} />
             {error !== "" ? <ErrorMessage>{error}</ErrorMessage> : <p></p>}

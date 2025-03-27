@@ -49,6 +49,7 @@ function PathDetails() {
         (path !== null && error === "") &&
         <>
           <Typography variant="h3">Assignments</Typography>
+          {path.assignments.length == 0 && <ErrorMessage>No assignments found.</ErrorMessage>}
           {path.assignments.toSorted((a, b) => b.expirationDate.getTime() - a.expirationDate.getTime()).map(assignment => (
             <div key={assignment.id} className={`${genericListItemStyle} flex items-center gap-2`}>
               <StyledLink to={`/assignment/details/${assignment.id}`}>
@@ -63,9 +64,13 @@ function PathDetails() {
               <AddStudent path={path} setPath={setPath}></AddStudent>
               <Typography variant="h3">Quizzes</Typography>
               {path.quizzes.map(quiz => (
-                <div key={quiz.id} className={genericListItemStyle}>
-                  {quiz.title}
-                  <StyledLink to="/teacher/createAssignment" state={{ quizId: quiz.id, quizName: quiz.title, pathId: path.id, pathName: path.name }}>Create assignment</StyledLink>
+                <div key={quiz.id} className="mb-2 border-2 border-dashed px-8 py-4">
+                  <span className="flex justify-between">
+                    <span>
+                      {quiz.title}
+                    </span>
+                    <StyledLink to="/teacher/createAssignment" state={{ quizId: quiz.id, quizName: quiz.title, pathId: path.id, pathName: path.name }}>Create assignment</StyledLink>
+                  </span>
                 </div>
               ))}
             </>

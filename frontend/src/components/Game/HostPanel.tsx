@@ -13,6 +13,7 @@ import UsernamesDisplay from "./UsernamesDisplay"
 import { axiosPublic } from "misc/utils"
 import ScoresDisplay from "./ScoresDisplay"
 import { genericContainerStyle } from "components/Misc/Styles"
+import StyledLink from "components/Misc/StyledLink"
 
 function HostPanel() {
   const { id } = useParams()
@@ -188,30 +189,37 @@ function HostPanel() {
   return (
     <div className={genericContainerStyle} ref={divRef}>
       {(gameEnded || displayScores)
-      ?
-      <>
-        <BigTextContainer>
-          {gameEnded ? <Typography variant="h1">Game ended.</Typography> : <Typography variant="h1">{currentAnswer}</Typography>}
-          <ScoresDisplay scores={scores} />
-        </BigTextContainer>
-      </>
-      :
-      currentQuestion ?
-      <BigTextContainer size={1}>
-        {currentQuestion.imagePath ? <img src={`${config.url.STORAGE_BASE_URL}${currentQuestion.imagePath}`} /> : <></>}
-        <Typography variant="h1">{currentQuestion.question}</Typography>
-        <ScoresDisplay scores={scores} />
-        <span></span>
-      </BigTextContainer>
-      :
-      <BigTextContainer size={1}>
-        {client ? <p className="text-center">{location?.state?.assignmentName && `${location.state.assignmentName}`}</p> : <p>"Connecting..."</p>}
-        <div className="text-center">Enter this code to join</div>
-        <div className="mb-5">{gameCode}</div>
-        <UsernamesDisplay usernames={players} />
-        <div className="text-center mb-5">{lastMessage}</div>
-        <Button color="blue" onClick={() => startGame()}>START QUIZ</Button>
-      </BigTextContainer>}
+        ?
+        <>
+          <BigTextContainer>
+            {gameEnded
+              ?
+              <>
+                <Typography variant="h1">Game ended.</Typography>
+                {location?.state?.assignmentId && <StyledLink to={`/assignment/details/${location.state.assignmentId}`}>Back to assignment</StyledLink>}
+              </>
+              :
+              <Typography variant="h1">{currentAnswer}</Typography>}
+            <ScoresDisplay scores={scores} />
+          </BigTextContainer>
+        </>
+        :
+        currentQuestion ?
+          <BigTextContainer size={1}>
+            {currentQuestion.imagePath ? <img src={`${config.url.STORAGE_BASE_URL}${currentQuestion.imagePath}`} /> : <></>}
+            <Typography variant="h1">{currentQuestion.question}</Typography>
+            <ScoresDisplay scores={scores} />
+            <span></span>
+          </BigTextContainer>
+          :
+          <BigTextContainer size={1}>
+            {client ? <p className="text-center">{location?.state?.assignmentName && `${location.state.assignmentName}`}</p> : <p>"Connecting..."</p>}
+            <div className="text-center">Enter this code to join</div>
+            <div className="mb-5">{gameCode}</div>
+            <UsernamesDisplay usernames={players} />
+            <div className="text-center mb-5">{lastMessage}</div>
+            <Button color="blue" onClick={() => startGame()}>START QUIZ</Button>
+          </BigTextContainer>}
     </div>
   )
 }

@@ -24,4 +24,7 @@ public class Role {
         this.name = eRole;
     }
 
+    public Role(String role) {
+        this.name = ERole.valueOf(role);
+    }
 }
