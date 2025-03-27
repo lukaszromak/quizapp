@@ -2,10 +2,10 @@ package com.lukasz.quizapp.controllers;
 
 import com.lukasz.quizapp.dto.*;
 import com.lukasz.quizapp.entities.*;
-import com.lukasz.quizapp.exception.AnswerNotFoundException;
-import com.lukasz.quizapp.exception.PathNotFoundException;
-import com.lukasz.quizapp.exception.QuestionNotFoundException;
-import com.lukasz.quizapp.exception.StudentNotInClassroom;
+import com.lukasz.quizapp.exception.*;
+import com.lukasz.quizapp.exception.Assigment.AssignmentExpiredException;
+import com.lukasz.quizapp.exception.Assigment.AsynchronousSubmissionForSynchronousAssignmentException;
+import com.lukasz.quizapp.exception.Assigment.TooManySubmissionsException;
 import com.lukasz.quizapp.services.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @RestController
 @RequestMapping("/quiz")
@@ -102,6 +99,18 @@ public class QuizController {
 
             if(path.getStudents().stream().noneMatch(user1 -> Objects.equals(user1.getId(), user.getId()))) {
                 throw new StudentNotInClassroom(String.format("Student with id {%d} is not in that classroom.", path.getId()));
+            }
+
+            if(assignment.getExpirationDate() != null && !assignment.isAllowSubmitAfterExpiration() && new Date().after(assignment.getExpirationDate())) {
+                throw new AssignmentExpiredException("Assignment already expired.");
+            }
+
+            if(assignment.getSolves().stream().filter(s -> Objects.equals(s.getUser().getId(), user.getId())).count() > 0) {
+                throw new TooManySubmissionsException("You sent too many submissions to this assignment.");
+            }
+
+            if(assignment.isSynchronous() && !assignment.isAllowAsynchronousSubmission()) {
+                throw new AsynchronousSubmissionForSynchronousAssignmentException("This assignment is not allowed to be solved asynchronously.");
             }
 
             solve.setAssignment(assignment);

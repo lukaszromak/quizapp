@@ -8,6 +8,8 @@ import NavigationButton from "components/Misc/NavigationButton";
 import Button from "components/Misc/Button";
 import { genericContainerStyle } from "components/Misc/Styles";
 import QuestionsDisplay from "./AnswersDisplay";
+import ErrorMessage from "components/Misc/ErrorMessage";
+
 
 function QuizSolve() {
   const navigate = useNavigate()
@@ -18,6 +20,7 @@ function QuizSolve() {
   const [quiz, setQuiz] = useState<Quiz>({ id: null, title: "", questions: new Array<Question>(), categories: new Array<QuizCategory>() });
   const { id } = useParams()
   const [searchParams, setSearchParams] = useSearchParams()
+  const [submitError, setSubmitError] = useState("")
 
   const fetchQuiz = async (id: number) => {
     setIsLoading(true)
@@ -39,8 +42,14 @@ function QuizSolve() {
       if (response.status === 200) {
         navigate('/quiz/results',{ state: { results: response.data } });
       }
-    } catch (error) {
-      console.log(error)
+    } catch (error : any) {
+      if(error?.response?.data?.message) {
+        if(error.response.data.message === "Assignment already expired.") {
+          setSubmitError("Assignment already expired.")
+        }
+      } else {
+        setSubmitError("Error while submitting quiz.")
+      }
     } finally {
       setIsSubmitting(false)
     }
@@ -82,11 +91,23 @@ function QuizSolve() {
   }
 
   const handleSubmit = () => {
-    try {
-      sendSolution()
-    } catch (error) {
-      console.log(error)
+    if(!quiz?.questions?.length) return
+
+    let validAnswers = 0
+
+    for(let i = 0; i < quiz.questions.length; i++) {
+      if(!quiz.questions[i]?.answers?.length) return
+
+      for(let j = 0; j < quiz.questions[i].answers.length; j++) {
+          if(quiz.questions[i].answers[j].isValid) validAnswers++
+      }
+
+      if(validAnswers == 0) {
+        setSubmitError("Not all questions are answered.")
+        return
+      }
     }
+    sendSolution()
   }
   
   return (
@@ -95,6 +116,7 @@ function QuizSolve() {
       {noAuth ? <NavigationButton navigateTo={`/login?returnUrl=/quiz/solve/${quiz.id}`}>Login to solve quiz</NavigationButton> :
         <>
           <QuestionsDisplay handleInput={handleInput} quizQuestions={quiz.questions}/>
+          {submitError.length > 0 && <ErrorMessage>{submitError}</ErrorMessage>}
           <Button onClick={() => handleSubmit()} color="blue" style="" disabled={isSubmitting}>{isSubmitting ? "..." : "Submit"}</Button>
         </>}
     </div>

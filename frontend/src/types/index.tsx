@@ -123,7 +123,9 @@ interface Assignment {
     solves: Array<Solve>,
     startDate: Date,
     expirationDate: Date,
-    isSynchronous: boolean
+    isSynchronous: boolean,
+    allowAsynchronousSubmission: boolean,
+    allowSubmitAfterExpiration: boolean
 }
 
 export {

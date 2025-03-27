@@ -9,6 +9,7 @@ import com.lukasz.quizapp.exception.PathNotFoundException;
 import com.lukasz.quizapp.repositories.AssignmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
 import java.util.Date;
@@ -109,6 +110,18 @@ public class AssignmentService {
         return assignmentRepository.save(assignment);
     }
 
+    @Transactional
+    public AssignmentDto update(AssignmentDto assignmentDto) {
+        Assignment assignment = read(assignmentDto.getId(), false);
+
+        assignment.setAllowAsynchronousSubmission(assignmentDto.isAllowAsynchronousSubmission());
+        assignment.setAllowSubmitAfterExpiration(assignmentDto.isAllowSubmitAfterExpiration());
+
+        Assignment savedAssignment = assignmentRepository.save(assignment);
+
+        return mapAssignmentToAssignmentDto(savedAssignment, true);
+    }
+
     public static AssignmentDto mapAssignmentToAssignmentDto(Assignment assignment, boolean includeSolves) {
         AssignmentDto assignmentDto = new AssignmentDto();
 
@@ -120,8 +133,9 @@ public class AssignmentService {
         assignmentDto.setExpirationDate(assignment.getExpirationDate());
         assignmentDto.setStartDate(assignment.getStartDate());
         assignmentDto.setIsSynchronous(assignment.isSynchronous());
+        assignmentDto.setAllowAsynchronousSubmission(assignment.isAllowAsynchronousSubmission());
+        assignmentDto.setAllowSubmitAfterExpiration(assignment.isAllowSubmitAfterExpiration());
 
         return assignmentDto;
     }
-
 }

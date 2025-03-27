@@ -28,4 +28,7 @@ public class AssignmentDto {
 
     private Boolean isSynchronous;
 
+    private boolean allowAsynchronousSubmission;
+
+    private boolean allowSubmitAfterExpiration;
 }
