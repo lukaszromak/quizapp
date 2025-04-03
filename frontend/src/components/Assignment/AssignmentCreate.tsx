@@ -7,7 +7,7 @@ import { genericTextInputStyle } from "components/Misc/Styles"
 import Button from "components/Misc/Button"
 import { axiosPrivate } from "misc/utils"
 import ErrorMessage from "components/Misc/ErrorMessage"
-import formatDate from "components/Misc/formatDate"
+import { formatDate } from "misc/utils"
 import { genericContainerStyle } from "components/Misc/Styles"
 
 function AssignmentCreate() {

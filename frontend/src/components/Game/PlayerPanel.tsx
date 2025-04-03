@@ -13,6 +13,7 @@ import ErrorMessage from "components/Misc/ErrorMessage"
 import { genericContainerStyle } from "components/Misc/Styles"
 import ScoresDisplay from "./ScoresDisplay"
 import { config } from "misc/constants"
+import GameCodeInput from "./GameCodeInput"
 
 // {"id": null,
 //   "question": "Which country is home to the Great Barrier Reef?",
@@ -229,7 +230,8 @@ function PlayerPanel() {
           <BigTextContainer size={1}>
             {(client && error === "") ? <p>Connected</p> : <p></p>}
             <div>Enter game code</div>
-            <input className="text-center" value={gameCode} onChange={(e) => setGameCode(e.currentTarget.value)} />
+            {/* <input className="text-center" value={gameCode} onChange={(e) => setGameCode(e.currentTarget.value)} /> */}
+            {<GameCodeInput length={6}/>}
             {error !== "" ? <ErrorMessage>{error}</ErrorMessage> : <p></p>}
             <Button color="blue" onClick={() => setTryConnect(true)}>enter</Button>
           </BigTextContainer>}

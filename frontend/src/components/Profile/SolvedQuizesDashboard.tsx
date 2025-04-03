@@ -1,11 +1,10 @@
 import { useState, useEffect, useRef } from "react"
 import { useAppSelector } from "store"
 
-import Donut from "components/Misc/Donut"
+import Donut from "./Donut"
 import { axiosPrivate } from "misc/utils"
 import { Solve } from "types"
 import { Typography } from "components/Misc/Typography"
-import { isTypeOfExpression } from "typescript"
 
 const colors = [
   "#4CAF50",
@@ -54,12 +53,16 @@ function SolvedQuizesDashboard() {
   }, [solvesByType])
 
   useEffect(() => {
+    if(!solves || !solves.length) return
+
     const solvesByType = new Map<string, number>()
     solvesByType.set("Games", solves.reduce((prev, curr) => curr.wasGame ? prev + 1 : prev, 0))
     solvesByType.set("Quizes", solves.reduce((prev, curr) => !curr.wasGame ? prev + 1 : prev, 0))
 
     const solvesByCategory = new Map<string, number>()
+    console.log(solves)
     for(let i = 0; i < solves.length; i++) {
+      console.log(solves[i].quiz)
       for(let j = 0; j < solves[i].quiz.categories.length; j++) {
         const value = solvesByCategory.get(solves[i].quiz.categories[j].name)
         if(value) {

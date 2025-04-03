@@ -7,6 +7,7 @@ import { register } from "features/authSlice"
 import ErrorMessage from "./Misc/ErrorMessage"
 import StyledLink from "./Misc/StyledLink"
 import { genericContainerStyle } from "./Misc/Styles"
+import Button from "./Misc/Button"
 
 function Register() {
   const [username, setUsername] = useState<string>("")
@@ -96,16 +97,13 @@ function Register() {
           </div>
         </div>
         <div className="mt-6 flex items-center justify-end gap-x-6">
-          <button type="button" className="text-sm font-semibold leading-6 text-gray-900">
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          <Button
+            color="indigo"
+            style="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             disabled={isLoading}
           >
-            Save
-          </button>
+            Register
+          </Button>
         </div>
       </form>
     </div>

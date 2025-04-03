@@ -112,7 +112,7 @@ function PathCreate() {
 
   return (
     <div className={genericContainerStyle}>
-      <Typography variant="h1" className="text-center mb-5">Create class</Typography>
+      <Typography variant="h1" className="mb-5">Create Path</Typography>
       <div className="border border-gray-400 rounded-md shadow-md p-4 mb-3">
         <Typography variant="h4">Selected Quizzes</Typography>
         {selectedQuizes.length === 0 ? <div className={genericListItemStyle}><p>Here will appear selected quizzes</p></div> :

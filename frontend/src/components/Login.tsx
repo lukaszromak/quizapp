@@ -86,8 +86,7 @@ export default function Login() {
           </div>
         </div>
         <div className="mt-6 flex items-center justify-end gap-x-6">
-          <Button color="gray" style="text-sm font-semibold leading-6">Cancel</Button>
-          <Button color="indigo" style="text-sm font-semibold leading-6">Save</Button>
+          <Button color="indigo" style="text-sm font-semibold leading-6">Log in</Button>
         </div>
       </form> 
     </div>

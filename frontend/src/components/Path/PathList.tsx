@@ -25,7 +25,7 @@ function PathList() {
 
   return (
     <div className={genericContainerStyle}>
-      <Typography variant="h1" className="mb-2">Your Classroms</Typography>
+      <Typography variant="h1" className="mb-2">Your Quiz Paths</Typography>
       {paths.map((path) => (
           <div key={path.id} className="mb-2 border-2 border-dashed px-8 py-4 mb-1">
             <StyledLink to={`/path/details/${path.id}`}>

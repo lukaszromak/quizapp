@@ -1,12 +1,21 @@
 import StyledLink from "components/Misc/StyledLink"
+import { genericContainerStyle, genericListItemStyle } from "components/Misc/Styles"
+import { Typography } from "components/Misc/Typography"
 
 function ProfileNavigation() {
   return (
-    <>
-      <StyledLink to="/user/changePassword">Change password</StyledLink>
-      <StyledLink to="/user/quizzes">Quizzes</StyledLink>
-      <StyledLink to="/user/solvedQuizzes">Solved quizzes</StyledLink>
-    </>
+    <div className={genericContainerStyle}>
+      <Typography variant="h1">User Profile</Typography>
+      <div className={genericListItemStyle}>
+        <StyledLink to="/user/changePassword">Change password</StyledLink>
+      </div>
+      <div className={genericListItemStyle}>
+        <StyledLink to="/user/quizzes">Quizzes</StyledLink>
+      </div>
+      <div className={genericListItemStyle}>
+        <StyledLink to="/user/solvedQuizzes">Solved quizzes</StyledLink>
+      </div>
+    </div>
   )
 }
 

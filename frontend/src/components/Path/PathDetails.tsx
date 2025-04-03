@@ -7,7 +7,7 @@ import { Path } from "types"
 import AddStudent from "./AddStudent"
 import { Typography } from "components/Misc/Typography"
 import { genericListItemStyle, genericContainerStyle } from "components/Misc/Styles"
-import formatDate from "components/Misc/formatDate"
+import { formatDate } from "misc/utils"
 import { useAppSelector } from "store"
 import StyledLink from "components/Misc/StyledLink"
 
@@ -38,7 +38,7 @@ function PathDetails() {
       console.log(res.data)
       setError("")
     } catch (error) {
-      setError("Classroom not found.")
+      setError("Path not found.")
     }
   }
 

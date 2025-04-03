@@ -1,6 +1,6 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Link, useLocation } from 'react-router-dom'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
 import { useAppSelector, useAppDispatch } from "../store"
 import { logout } from '../features/authSlice'
@@ -8,13 +8,11 @@ import { useState, useEffect } from 'react'
 import StyledLink from './Misc/StyledLink'
 
 const _navigation = [
-  { name: 'Home', href: '/', current: false},
   { name: 'Join game', href: '/game/:id' },
-  { name: 'Auth test', href: '/authtest' },
   { name: 'Create quiz', href: '/quiz/createQuiz'},
   { name: 'Quizzes', href: '/quizList'},
   { name: 'Create path', href: '/teacher/createPath', roles: ['ROLE_MODERATOR', 'ROLE_ADMIN'] },
-  { name: 'Path', href: '/pathList'},
+  { name: 'Paths', href: '/pathList'},
   { name: 'Users', href: '/admin/userList', roles: ['ROLE_ADMIN']}
 ]
 
@@ -83,8 +81,8 @@ export default function Navbar() {
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex flex-shrink-0 items-center">
               <img
-                alt="Your Company"
-                src="https://img.freepik.com/darmowe-wektory/ptak-kolorowe-logo-wektor-gradientu_343694-1365.jpg"
+                alt="Quiz app logo"
+                src="/logo512.png"
                 className="h-8 w-auto"
               />
             </div>
@@ -117,9 +115,6 @@ export default function Navbar() {
                   type="button"
                   className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                 >
-                  <span className="absolute -inset-1.5" />
-                  <span className="sr-only">View notifications</span>
-                  <BellIcon aria-hidden="true" className="h-6 w-6" />
                 </button>
                 <Menu as="div" className="relative ml-3">
                   <div>
@@ -128,7 +123,7 @@ export default function Navbar() {
                       <span className="sr-only">Open user menu</span>
                       <img
                         alt=""
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                        src="/Default_pfp.jpg"
                         className="h-8 w-8 rounded-full"
                       />
                     </MenuButton>
@@ -138,9 +133,9 @@ export default function Navbar() {
                     className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
                   >
                     <MenuItem>
-                      <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
+                      <Link to="/user" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
                         Your Profile
-                      </a>
+                      </Link>
                     </MenuItem>
                     <MenuItem>
                       <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">

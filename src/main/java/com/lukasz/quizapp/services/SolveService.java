@@ -55,7 +55,7 @@ public class SolveService {
         return solves.stream().map(
                 (solve -> new SolveDto(
                         solve.getId(),
-                        new QuizDto(solve.getQuiz().getId(), solve.getQuiz().getTitle(), null, null),
+                        new QuizDto(solve.getQuiz().getId(), solve.getQuiz().getTitle(), null, solve.getQuiz().getCategories()),
                         new UserDto(solve.getUser().getId(), solve.getUser().getUsername(), null, null),
                         solve.getCorrectAnswers(),
                         solve.getTotalAnswers(),
