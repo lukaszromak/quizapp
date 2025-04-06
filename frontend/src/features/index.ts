@@ -6,11 +6,6 @@ export {
 } from "./authSlice"
 
 export {
-    fetch,
-    testSlice
-} from "./testSlice"
-
-export {
     reset,
     quizSlice,
     create,
@@ -26,7 +21,9 @@ export {
     handleTimeToAnswerInput,
     handleQuestionImageInput,
     toggleCategory,
-    clearQuestionImage
+    clearQuestionImage,
+    update,
+    fetch
 } from "./createQuizSlice"
 
 export {

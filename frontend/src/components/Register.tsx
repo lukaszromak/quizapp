@@ -19,7 +19,7 @@ function Register() {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    if(registered) {
+    if (registered) {
       history.navigate?.('/login')
     }
   }, [registered])
@@ -35,7 +35,7 @@ function Register() {
         <div className="space-y-12">
           <div className="border-b border-gray-900/10 pb-12">
             <div>
-            <div className="sm:col-span-4">
+              <div className="sm:col-span-4">
                 <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">
                   Username
                 </label>
@@ -93,7 +93,10 @@ function Register() {
               </div>
             </div>
             {authError ? <ErrorMessage>Invalid email or username.</ErrorMessage> : ""}
-            {<StyledLink to="/login">Login</StyledLink>}
+            <div className="mt-2">
+              <span className="font-medium leading-6 text-gray-900">Already have an account? </span>
+              {<StyledLink to="/login">Login</StyledLink>}
+            </div>
           </div>
         </div>
         <div className="mt-6 flex items-center justify-end gap-x-6">

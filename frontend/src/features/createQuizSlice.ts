@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { axiosPrivate } from '../misc/utils';
+import { axiosPrivate } from '../helpers/utils';
 import { QuizDto, QuizCategory } from 'types';
 
 interface ToggleCategoryInput {
@@ -48,6 +48,14 @@ interface QuizState {
 
 const name = 'createQuiz';
 
+export const update = createAsyncThunk(
+  `${name}/update`,
+  async (quiz: QuizDto) => {
+    const response = await axiosPrivate.put(`/quiz`, quiz)
+    return response.data
+  }
+)
+
 export const create = createAsyncThunk(
   `${name}/create`,
   async (quiz: QuizDto) => {
@@ -68,6 +76,14 @@ export const create = createAsyncThunk(
     const response = await axiosPrivate.post(`/quiz`, formData);
     return response.data
   }
+)
+
+export const fetch = createAsyncThunk(
+    `${name}/fetch`,
+    async (id: number) => {
+        const response = await axiosPrivate.get(`/quiz/${id}`)
+        return response.data
+    }
 )
 
 const toBase64 = (file: File): Promise<string> => new Promise((resolve, reject) => {
@@ -307,6 +323,9 @@ export const quizSlice = createSlice({
       }
       
       state.quiz = quiz
+    })
+    .addCase(fetch.fulfilled, (state, action) => {
+      state.quiz = action.payload
     })
   }
 })

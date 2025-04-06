@@ -207,7 +207,7 @@ public class RepositoriesInitializer {
             }
             if(quizRepository.findAll().isEmpty()) {
                 quizzes.get(0).setCategories(new HashSet<>(Arrays.asList(categories.get(0))));
-                quizzes.get(0).setCreator(users.get(0));
+                quizzes.get(0).setCreator(users.get(1));
                 quizRepository.saveAll(quizzes);
             }
             if(solveRepository.findAll().isEmpty()) {

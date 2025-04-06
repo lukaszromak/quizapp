@@ -52,6 +52,24 @@ public class QuizController {
         return ResponseEntity.ok(quizzes);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteQuiz(@PathVariable Long id) {
+        Quiz quiz = quizService.read(id);
+
+        if(!authService.getAuthenticatedUser().getId().equals(quiz.getCreator().getId())) {
+            throw new RuntimeException("You cannot delete others quizzes!.");
+        }
+
+        quizService.delete(id);
+
+        return ResponseEntity.ok(String.format("Quiz with id %d successfully deleted.", id));
+    }
+
+    @PutMapping
+    public ResponseEntity<Quiz> updateQuiz(@RequestBody QuizDto quizDto) {
+        return quizService.update(quizDto);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Quiz> getQuiz(@PathVariable Long id) {
         Quiz quiz = quizService.read(id);

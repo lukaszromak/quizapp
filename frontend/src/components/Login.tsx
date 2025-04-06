@@ -82,7 +82,10 @@ export default function Login() {
               </div>
             </div>
             {authError ? <ErrorMessage>Invalid email or username.</ErrorMessage> : ""}
-            {<StyledLink to="/register"><span className={linkStyle}>Register</span></StyledLink>}
+            <div className="mt-2">
+              <span className="font-medium leading-6 text-gray-900">Don't have an account? </span>
+              {<StyledLink to="/register"><span className={linkStyle}>Register</span></StyledLink>}
+            </div>
           </div>
         </div>
         <div className="mt-6 flex items-center justify-end gap-x-6">

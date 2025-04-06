@@ -21,8 +21,6 @@ public class Game {
 
     private String hostUsername;
 
-    private String answerTopic;
-
     private Quiz quiz;
 
     private Long assignmentId;
@@ -37,10 +35,9 @@ public class Game {
 
     private boolean started;
 
-    public Game(String gameCode, String hostUsername, String answerTopic, Quiz quiz, Long assignmentId) {
+    public Game(String gameCode, String hostUsername, Quiz quiz, Long assignmentId) {
         this.gameCode = gameCode;
         this.hostUsername = hostUsername;
-        this.answerTopic = answerTopic;
         this.quiz = quiz;
         this.assignmentId = assignmentId;
         this.currentQuestion = 0;

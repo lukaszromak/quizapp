@@ -4,12 +4,12 @@ import { Fragment } from "react"
 import { AxiosResponse } from "axios"
 
 import { Assignment } from "types"
-import { axiosPrivate } from "misc/utils"
+import { axiosPrivate } from "helpers/utils"
 import { useAppSelector, useAppDispatch } from "store"
 import { genericContainerStyle } from "components/Misc/Styles"
 import ErrorMessage from "components/Misc/ErrorMessage"
 import { Typography } from "components/Misc/Typography"
-import { formatDate } from "misc/utils"
+import { formatDate } from "helpers/utils"
 import NavigationButton from "components/Misc/NavigationButton"
 import { fetchQuiz } from "features/readQuizSlice"
 import { fetchQuizCategory } from "features/quizCategorySlice"
@@ -90,29 +90,36 @@ function AssignmentDetails() {
           <Typography variant="h1" className="mb-2">Assignment - {assignment.name} {assignment.name && "on"} {formatDate(assignment.startDate, true)}</Typography>
           <Typography variant="p">{assignment.isSynchronous ? `Synchronous assignment, asynchronous submissions are ${!assignment.allowAsynchronousSubmission ? "not" : ""} allowed` : "Asynchronous assignment"}</Typography>
           {assignment.isSynchronous && authUser.roles.includes("ROLE_MODERATOR") &&
-          <Button 
-            color="blue" 
-            style="block mb-2"
-            onClick={() => updateAssignment({...assignment, allowAsynchronousSubmission: !assignment.allowAsynchronousSubmission})}>
-              {!assignment.allowAsynchronousSubmission ? "Allow for asynchronous submissions" : "Disable asynchronous submissions"}
-          </Button>}
-          {(new Date().getTime() >= assignment.expirationDate.getTime()) && authUser.roles.includes("ROLE_MODERATOR") &&
-          <>
-            <Typography variant="p">{`Assignment expired, submissions after expiration are ${!assignment.allowSubmitAfterExpiration ? "not" : ""} allowed`}</Typography>
-            <Button 
-              color="blue" 
+            <Button
+              color="blue"
               style="block mb-2"
-              onClick={() => updateAssignment({...assignment, allowSubmitAfterExpiration: !assignment.allowSubmitAfterExpiration})}>
+              onClick={() => updateAssignment({ ...assignment, allowAsynchronousSubmission: !assignment.allowAsynchronousSubmission })}>
+              {!assignment.allowAsynchronousSubmission ? "Allow for asynchronous submissions" : "Disable asynchronous submissions"}
+            </Button>}
+          {(new Date().getTime() >= assignment.expirationDate.getTime()) && authUser.roles.includes("ROLE_MODERATOR") &&
+            <>
+              <Typography variant="p">{`Assignment expired, submissions after expiration are ${!assignment.allowSubmitAfterExpiration ? "not" : ""} allowed`}</Typography>
+              <Button
+                color="blue"
+                style="block mb-2"
+                onClick={() => updateAssignment({ ...assignment, allowSubmitAfterExpiration: !assignment.allowSubmitAfterExpiration })}>
                 {!assignment.allowSubmitAfterExpiration ? "Allow for submissions after expiration." : "Disable submissions after expiration."}
-            </Button>
-          </>
+              </Button>
+            </>
           }
           {assignment.isSynchronous ?
-            <NavigationButton
-              navigateTo={(authUser.roles.includes("ROLE_MODERATOR") || authUser.roles.includes("ROLE_ADMIN")) ? `/quiz/hostpanel/${assignment.quizId}` : "/game/:id"}
-              state={{ assignmentId: assignment.id, assignmentName: `Assignment - ${assignment.name} ${assignment.name && "on"} ${formatDate(assignment.startDate, true)}` }}>
-              {(authUser.roles.includes("ROLE_MODERATOR") || authUser.roles.includes("ROLE_ADMIN")) ? "Host game" : "Play game"}
-            </NavigationButton>
+            <>
+              <NavigationButton
+                navigateTo={(authUser.roles.includes("ROLE_MODERATOR") || authUser.roles.includes("ROLE_ADMIN")) ? `/quiz/hostpanel/${assignment.quizId}` : "/game/:id"}
+                state={{ assignmentId: assignment.id, assignmentName: `Assignment - ${assignment.name} ${assignment.name && "on"} ${formatDate(assignment.startDate, true)}` }}>
+                {(authUser.roles.includes("ROLE_MODERATOR") || authUser.roles.includes("ROLE_ADMIN")) ? "Host game" : "Play game"}
+              </NavigationButton>
+              {(assignment.allowAsynchronousSubmission && ((!authUser.roles.includes("ROLE_MODERATOR") && (!authUser.roles.includes("ROLE_ADMIN")))) &&
+                <NavigationButton
+                  navigateTo={`/quiz/solve/${assignment.quizId}?assignmentId=${assignment.id}`}>
+                  Solve assignment
+                </NavigationButton>)}
+            </>
             :
             (!authUser.roles.includes("ROLE_MODERATOR") && !authUser.roles.includes("ROLE_ADMIN")) &&
             <NavigationButton
@@ -152,12 +159,12 @@ function AssignmentDetails() {
                             <td className="border border-gray-300 p-2">{formatDate(solve.submittedAt, true)}</td>
                             <td className="border border-gray-300 p-2"><Button color="blue" onClick={() => toggleSubmittedAnswersView(solve.id)}>View</Button></td>
                           </tr>
-                          {solveSubmittedAnswersToDisplay.includes(solve.id) && 
-                          <tr key={`${solve.id}-submittedAnswers`} className="border border-gray-300 p-2">
-                            <td colSpan={8}>
-                              <AnswersDisplay quizQuestions={quiz.questions} submittedAnswers={solve.userAnswers}></AnswersDisplay>
-                            </td>
-                          </tr>
+                          {solveSubmittedAnswersToDisplay.includes(solve.id) &&
+                            <tr key={`${solve.id}-submittedAnswers`} className="border border-gray-300 p-2">
+                              <td colSpan={8}>
+                                <AnswersDisplay quizQuestions={quiz.questions} submittedAnswers={solve.userAnswers}></AnswersDisplay>
+                              </td>
+                            </tr>
                           }
                         </Fragment>
                       ))

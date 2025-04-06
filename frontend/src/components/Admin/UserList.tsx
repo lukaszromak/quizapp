@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 
 import { useAppSelector } from "store"
 import { User } from "types"
-import { axiosPrivate } from "misc/utils"
+import { axiosPrivate } from "helpers/utils"
 import { genericContainerStyle } from "components/Misc/Styles"
 import ErrorMessage from "components/Misc/ErrorMessage"
 import PaginationBar from "components/Misc/PaginationBar"

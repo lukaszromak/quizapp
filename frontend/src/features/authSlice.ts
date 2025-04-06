@@ -1,6 +1,6 @@
-import { createAsyncThunk, createReducer, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import { axiosPrivate, axiosPublic } from '../misc/utils';
+import { axiosPrivate, axiosPublic } from '../helpers/utils';
 import { User } from 'types';
 
 interface AuthState {

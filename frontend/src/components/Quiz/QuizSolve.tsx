@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { useParams, useNavigate, useSearchParams } from "react-router-dom"
 import { useAppSelector } from "store";
 
-import { axiosPrivate } from "misc/utils";
+import { axiosPrivate } from "helpers/utils";
 import { Question, Quiz, QuizCategory } from "types"
 import NavigationButton from "components/Misc/NavigationButton";
 import Button from "components/Misc/Button";

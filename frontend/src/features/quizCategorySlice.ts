@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import { axiosPublic } from '../misc/utils';
+import { axiosPublic } from '../helpers/utils';
 import { QuizCategory } from 'types';
 
 interface State {

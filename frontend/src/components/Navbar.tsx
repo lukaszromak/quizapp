@@ -8,11 +8,11 @@ import { useState, useEffect } from 'react'
 import StyledLink from './Misc/StyledLink'
 
 const _navigation = [
-  { name: 'Join game', href: '/game/:id' },
-  { name: 'Create quiz', href: '/quiz/createQuiz'},
-  { name: 'Quizzes', href: '/quizList'},
+  { name: 'Join game', href: '/game/:id', roles: ['ROLE_USER', 'ROLE_MODERATOR', 'ROLE_ADMIN']},
+  { name: 'Create quiz', href: '/quiz/createQuiz', roles: ['ROLE_USER', 'ROLE_MODERATOR', 'ROLE_ADMIN']},
+  { name: 'Quizzes', href: '/quizList', roles: ['ROLE_USER', 'ROLE_MODERATOR', 'ROLE_ADMIN']},
   { name: 'Create path', href: '/teacher/createPath', roles: ['ROLE_MODERATOR', 'ROLE_ADMIN'] },
-  { name: 'Paths', href: '/pathList'},
+  { name: 'Paths', href: '/pathList', roles: ['ROLE_USER', 'ROLE_MODERATOR', 'ROLE_ADMIN']},
   { name: 'Users', href: '/admin/userList', roles: ['ROLE_ADMIN']}
 ]
 
@@ -54,6 +54,8 @@ export default function Navbar() {
   }, [location])
 
   const canSeeLink = (rolesUser: string[], rolesLink: string[]) => {
+    if(!authUser) return false
+
     for(let i = 0; i < rolesUser.length; i++) {
       for(let j = 0; j < rolesLink.length; j++) {
         if(rolesUser[i] === rolesLink[j]) {
@@ -79,17 +81,18 @@ export default function Navbar() {
             </DisclosureButton>
           </div>
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-            <div className="flex flex-shrink-0 items-center">
+            <Link className="flex flex-shrink-0 items-center" to={"/"}>
               <img
                 alt="Quiz app logo"
                 src="/logo512.png"
                 className="h-8 w-auto"
               />
-            </div>
+              <span className='text-white font-black'>quiziuq</span>
+            </Link>
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
                 {navigation.map((item) => (
-                  (!item.roles || (authUser?.roles && canSeeLink(authUser?.roles, item.roles)))  &&
+                  ((authUser?.roles && canSeeLink(authUser?.roles, item.roles)))  &&
                   <Link
                     key={item.name}
                     to={item.href}
@@ -138,11 +141,6 @@ export default function Navbar() {
                       </Link>
                     </MenuItem>
                     <MenuItem>
-                      <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
-                        Settings
-                      </a>
-                    </MenuItem>
-                    <MenuItem>
                       <button onClick={() => dispatch(logout())} className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
                         Sign out
                       </button>
@@ -152,7 +150,7 @@ export default function Navbar() {
               </>
               :
               <StyledLink to='login'>
-                <span className='text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'>Sign in</span>
+                <span className='text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'>Log in</span>
               </StyledLink>
             }
           </div>
@@ -162,7 +160,7 @@ export default function Navbar() {
       <DisclosurePanel className="sm:hidden">
         <div className="space-y-1 px-2 pb-3 pt-2">
           {navigation.map((item) => (
-            (!item.roles || (authUser?.roles && canSeeLink(authUser?.roles, item.roles)))  &&
+            ((authUser?.roles && canSeeLink(authUser?.roles, item.roles)))  &&
             <DisclosureButton
               key={item.name}
               as="a"

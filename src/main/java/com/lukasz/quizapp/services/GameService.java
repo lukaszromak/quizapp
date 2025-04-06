@@ -28,39 +28,24 @@ import java.util.stream.Collectors;
 
 @Service
 public class GameService {
-    private static char[] chars = "0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
-
+    private static final char[] CHARS = "0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
     private static final int GAME_CODE_LENGTH = 6;
-
-    private static final int ANSWER_TOPIC_CODE_LENGTH = 36;
-
     private static final int DELAY_BETWEEN_QUESTIONS = 10;
-
     private SimpMessagingTemplate template;
-
     private ObjectMapper objectMapper;
-
     private static final Map<String, Game> games = new ConcurrentHashMap<>();
-
-    private static final Map<String, String> answerTopics = new ConcurrentHashMap<>();
-
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
-
-    private final QuizRepository quizRepository;
-
+    private final QuizService quizService;
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
-
     private final SolveService solveService;
-
     private final UserService userService;
-
     private final AssignmentService assignmentService;
 
     @Autowired
-    public GameService(SimpMessagingTemplate simpMessagingTemplate, ObjectMapper objectMapper, QuizRepository quizRepository, SolveService solveService, UserService userService, AssignmentService assignmentService) {
+    public GameService(SimpMessagingTemplate simpMessagingTemplate, ObjectMapper objectMapper, QuizService quizService, SolveService solveService, UserService userService, AssignmentService assignmentService) {
         this.template = simpMessagingTemplate;
         this.objectMapper = objectMapper;
-        this.quizRepository = quizRepository;
+        this.quizService = quizService;
         this.solveService = solveService;
         this.userService = userService;
         this.assignmentService = assignmentService;
@@ -89,19 +74,15 @@ public class GameService {
     }
 
     public Game createGame(String username, Long quizId, Long assignmentId) {
-        Optional<Quiz> quiz = quizRepository.findById(quizId);
+        Quiz quiz = quizService.read(quizId);
 
         if(assignmentId != null && !assignmentService.exists(assignmentId)) {
             return null;
         }
 
-        if (quiz.isEmpty()) {
-            return null;
-        }
-
         String gameCode = generateGameCode();
 
-        Game game = new Game(gameCode, username, generateAnswerTopicCode() ,quiz.get(), assignmentId);
+        Game game = new Game(gameCode, username, quiz, assignmentId);
         games.put(gameCode, game);
 
         return game;
@@ -114,21 +95,7 @@ public class GameService {
         do {
             sb.setLength(0);
             for (int i = 0; i < GAME_CODE_LENGTH; i++) {
-                sb.append(chars[random.nextInt(chars.length)]);
-            }
-        } while (games.containsKey(sb.toString()));
-
-        return sb.toString();
-    }
-
-    private String generateAnswerTopicCode() {
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder();
-
-        do {
-            sb.setLength(0);
-            for (int i = 0; i < GAME_CODE_LENGTH; i++) {
-                sb.append(chars[random.nextInt(chars.length)]);
+                sb.append(CHARS[random.nextInt(CHARS.length)]);
             }
         } while (games.containsKey(sb.toString()));
 
@@ -300,12 +267,6 @@ public class GameService {
                     Optional<Answer> validAnswer = question.getAnswers().stream().filter(Answer::getIsValid).findFirst();
                     question.setTimeToAnswer(cooldown);
 
-                    if(game.getAnswerTopic() != null) {
-                        logger.debug(String.format("Sending answer to host on topic /user/%s/queue/reply", game.getAnswerTopic()));
-                        validAnswer.ifPresent(answer -> template.convertAndSendToUser(game.getAnswerTopic(), "/queue/reply", new GameEvent(GameEventType.ANSWER, null, answer.getContent()), createSpecificUserHeaders(game.getAnswerTopic())));
-                    } else {
-                        logger.debug("Answer topic was null when tried to send answer to host");
-                    }
                     game.setCurrentQuestionStartedAt(System.currentTimeMillis());
                     template.convertAndSend(String.format("/topic/%s", game.getGameCode()), new GameEvent(GameEventType.NEW_QUESTION, null, objectMapper.writeValueAsString(question).replaceAll("\"isValid\":true", "\"isValid\":false")));
 

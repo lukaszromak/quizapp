@@ -1,7 +1,7 @@
 import { useState } from "react"
 
 import Button from "components/Misc/Button"
-import { axiosPrivate } from "misc/utils"
+import { axiosPrivate } from "helpers/utils"
 import ErrorMessage from "components/Misc/ErrorMessage"
 import SuccessMessage from "components/Misc/SuccessMessage"
 import { AxiosError } from "axios"

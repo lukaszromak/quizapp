@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom"
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline"
 
 import { useAppDispatch, useAppSelector } from "store"
-import { axiosPrivate } from "misc/utils"
+import { axiosPrivate } from "helpers/utils"
 import { Path, Quiz, Student } from "types"
 import { fetchQuizCategory } from "features/quizCategorySlice";
 import { Typography } from "components/Misc/Typography"

@@ -4,7 +4,7 @@ import { Typography } from "components/Misc/Typography"
 import ErrorMessage from "components/Misc/ErrorMessage"
 import Button from "components/Misc/Button"
 import { Student } from "types"
-import { axiosPrivate } from "misc/utils"
+import { axiosPrivate } from "helpers/utils"
 import { genericTextInputStyle, genericListItemStyle } from "components/Misc/Styles"
 import { Path } from "types"
 

@@ -12,6 +12,7 @@ import com.lukasz.quizapp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,15 +31,18 @@ public class QuizService {
 
     private final StorageService storageService;
 
+    private final UserService userService;
+
     private static final ExampleMatcher QUIZ_SEARCH = ExampleMatcher
             .matchingAny()
             .withMatcher("title", ExampleMatcher.GenericPropertyMatchers.ignoreCase().contains());
 
     @Autowired
-    public QuizService(QuizRepository quizRepository, AuthService authService, StorageService storageService) {
+    public QuizService(QuizRepository quizRepository, AuthService authService, StorageService storageService, UserService userService) {
         this.quizRepository = quizRepository;
         this.authService = authService;
         this.storageService = storageService;
+        this.userService = userService;
     }
 
     public Quiz save(QuizDto quizDto, MultipartFile[] images) {
@@ -155,8 +159,8 @@ public class QuizService {
         }
 
         quiz.setCategories(quizDto.getCategories());
-
-        quiz.setCreator(authService.getAuthenticatedUser());
+        User creator = userService.read(authService.getAuthenticatedUser().getUsername());
+        quiz.setCreator(creator);
 
         return quiz;
     }
@@ -229,5 +233,13 @@ public class QuizService {
         }
 
         return validAnswers == 1;
+    }
+
+    public void delete(Long id) {
+        quizRepository.deleteById(id);
+    }
+
+    public ResponseEntity<Quiz> update(QuizDto quizDto) {
+        return ResponseEntity.ok(quizRepository.save(mapQuizDtoToQuiz(quizDto, null)));
     }
 }

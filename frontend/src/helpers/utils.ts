@@ -1,5 +1,5 @@
 import axios from "axios"
-import { config } from "./constants"
+import { config } from "../misc/constants"
 import moment from "moment"
 import { store } from "../store"
 import { refreshToken } from "../features/authSlice"

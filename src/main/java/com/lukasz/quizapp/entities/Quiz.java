@@ -27,6 +27,10 @@ import java.util.Set;
                 @NamedSubgraph(
                         name = "categories-subgraph",
                         attributeNodes = @NamedAttributeNode("quizzes")
+                ),
+                @NamedSubgraph(
+                        name = "creator-subgraph",
+                        attributeNodes = @NamedAttributeNode("roles")
                 )
         }
 )

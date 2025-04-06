@@ -5,7 +5,6 @@ import { history } from './helpers/history';
 import Navbar from './components/Navbar';
 import Login from './components/Login';
 import Register from 'components/Register';
-import TestPage from './components/TestPage';
 import CreateQuiz from 'components/Quiz/QuizCreate';
 import QuizDetails from 'components/Quiz/QuizDetails';
 import QuizSolve from 'components/Quiz/QuizSolve';
@@ -35,11 +34,11 @@ export default function App() {
       <Navbar/>
       <Routes>
         <Route path='/' element={<PlayerPanel/>}></Route>
-        <Route path='/authtest' element={<TestPage/>}></Route>
         <Route path='/login' element={<Login/>}></Route>
         <Route path='/register' element={<Register/>}></Route>
         <Route path='/quiz/createQuiz' element={<CreateQuiz/>}></Route>
-        <Route path='/quizList' element={<QuizList/>}></Route>
+        <Route path='/quiz/updateQuiz' element={<CreateQuiz></CreateQuiz>}></Route>
+        <Route path='/quizList' element={<QuizList crud={false}/>}></Route>
         <Route path='/quiz/details/:id' element={<QuizDetails/>}></Route>
         <Route path='/quiz/solve/:id' element={<QuizSolve/>}></Route>
         <Route path='/quiz/results' element={<QuizResults/>}></Route>

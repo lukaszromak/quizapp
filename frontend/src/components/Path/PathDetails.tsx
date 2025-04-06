@@ -1,5 +1,5 @@
 import ErrorMessage from "components/Misc/ErrorMessage"
-import { axiosPrivate } from "misc/utils"
+import { axiosPrivate } from "helpers/utils"
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 
@@ -7,7 +7,7 @@ import { Path } from "types"
 import AddStudent from "./AddStudent"
 import { Typography } from "components/Misc/Typography"
 import { genericListItemStyle, genericContainerStyle } from "components/Misc/Styles"
-import { formatDate } from "misc/utils"
+import { formatDate } from "helpers/utils"
 import { useAppSelector } from "store"
 import StyledLink from "components/Misc/StyledLink"
 

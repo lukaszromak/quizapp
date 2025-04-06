@@ -1,8 +1,9 @@
 import { Quiz, QuizDto } from "types";
 import { useState, useEffect, Ref } from "react";
 import { useAppDispatch, useAppSelector } from "store";
+import { useLocation, useNavigate } from "react-router-dom";
 
-import { create, setTitle, readFromLocalStorage, addQuestion, deleteQuestion, addAnswer, deleteAnswer, handleQuestionInput, handleAnswerInput, markAnswerAsCorrect, handleTimeToAnswerInput, handleQuestionImageInput, toggleCategory, clearQuestionImage } from "features";
+import { reset, update, fetch, create, setTitle, readFromLocalStorage, addQuestion, deleteQuestion, addAnswer, deleteAnswer, handleQuestionInput, handleAnswerInput, markAnswerAsCorrect, handleTimeToAnswerInput, handleQuestionImageInput, toggleCategory, clearQuestionImage } from "features";
 import { fetchQuizCategory } from "features/quizCategorySlice";
 import Button from "components/Misc/Button";
 import ErrorMessage from "components/Misc/ErrorMessage";
@@ -30,23 +31,32 @@ function CreateQuiz() {
   const [hasValidationErrors, setHasValidationErrors] = useState(false)
   const isLoading = useAppSelector(state => state.createQuiz.isLoading)
   const dispatch = useAppDispatch();
+  const location = useLocation()
+  const quizId = location?.state?.quizId
+  const navigate = useNavigate()
 
   useEffect(() => {
-    dispatch(readFromLocalStorage())
-    dispatch(fetchQuizCategory())
+    if(quizId) {
+      dispatch(fetch(quizId))
+    } else {
+      dispatch(readFromLocalStorage())
+      dispatch(fetchQuizCategory())
+    }
   }, [])
 
   useEffect(() => {
-    localStorage.removeItem("quiz")
-    localStorage.setItem("quiz", JSON.stringify(quiz))
+    if(!update) {
+      localStorage.removeItem("quiz")
+      localStorage.setItem("quiz", JSON.stringify(quiz))
+    }
   }, [quiz])
 
   useEffect(() => {
-    // if (createdQuizId) {
-    //   localStorage.removeItem("quiz")
-    //   history.navigate?.(`/quiz/details/${createdQuizId}`)
-    //   dispatch(reset())
-    // }
+    if (createdQuizId) {
+      localStorage.removeItem("quiz")
+      navigate(`/quiz/details/${createdQuizId}`)
+      dispatch(reset())
+    }
   }, [quiz])
 
   const validateQuiz = (quiz: QuizDto) => {
@@ -92,8 +102,11 @@ function CreateQuiz() {
     if (!validateQuiz(quiz)) {
       return
     }
-    if (!isLoading) {
+    console.log(quizId)
+    if (!isLoading && !quizId) {
       dispatch(create(quiz))
+    } else if(!isLoading) {
+      dispatch(update(quiz))
     }
   }
 
@@ -175,7 +188,7 @@ function CreateQuiz() {
       </div>
       {hasValidationErrors ? <ErrorMessage>Please fill out required fields.</ErrorMessage> : ""}
       {error && <ErrorMessage>{error}</ErrorMessage>}
-      <Button onClick={() => handleSubmit()} color="blue">Submit</Button>
+      <Button onClick={() => handleSubmit()} color="blue">{quizId ? "Save" : "Submit"}</Button>
     </div>
   )
 }

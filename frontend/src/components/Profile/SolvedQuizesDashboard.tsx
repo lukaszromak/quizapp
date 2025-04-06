@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react"
 import { useAppSelector } from "store"
 
 import Donut from "./Donut"
-import { axiosPrivate } from "misc/utils"
+import { axiosPrivate } from "helpers/utils"
 import { Solve } from "types"
 import { Typography } from "components/Misc/Typography"
 

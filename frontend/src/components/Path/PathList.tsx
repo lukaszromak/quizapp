@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 
-import { axiosPrivate } from "misc/utils";
+import { axiosPrivate } from "helpers/utils";
 import { Typography } from "components/Misc/Typography";
 import { Path } from "types";
 import StyledLink from "components/Misc/StyledLink";

@@ -36,6 +36,7 @@ interface Quiz {
 }
 
 interface QuizDto {
+    id?: number,
     title: string,
     questions: Array<QuestionDto>,
     categories: Array<QuizCategory>,

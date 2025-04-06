@@ -4,13 +4,13 @@ import { Client } from "@stomp/stompjs"
 import { useLocation } from "react-router-dom"
 
 import { config } from "misc/constants"
-import { axiosPrivate } from "misc/utils"
+import { axiosPrivate } from "helpers/utils"
 import BigTextContainer from "components/Misc/BigTextContainer"
 import { GameEvent, GameEventType, Game, Question } from "types"
 import Button from "components/Misc/Button"
 import { Typography } from "components/Misc/Typography"
 import UsernamesDisplay from "./UsernamesDisplay"
-import { axiosPublic } from "misc/utils"
+import { axiosPublic } from "helpers/utils"
 import ScoresDisplay from "./ScoresDisplay"
 import { genericContainerStyle } from "components/Misc/Styles"
 import StyledLink from "components/Misc/StyledLink"
@@ -41,22 +41,23 @@ function HostPanel() {
 
         console.log('Connected to websocket')
 
-        client.subscribe(`/user/${answersTopic}/queue/reply`, message => {
-          const gameEvent = JSON.parse(message.body) as GameEvent
-          if (gameEvent.message) setCurrentAnswer(gameEvent.message)
-        })
-
         client.subscribe(`/topic/${gameId}`, message => {
           const gameEvent = JSON.parse(message.body) as GameEvent
           switch (gameEvent.eventType) {
+            case GameEventType.ANSWER:
+              if (gameEvent.message) setCurrentAnswer(gameEvent.message)
+              break;
             case GameEventType.PLAYER_JOINED_GAME:
             case GameEventType.PLAYER_RECONNECTED:
               if (gameEvent.username) {
                 setLastMessage(`${gameEvent.username} ${gameEvent.eventType === GameEventType.PLAYER_JOINED_GAME ? "joined" : "reconnected"}.`)
-                const idx = players.indexOf(gameEvent.username)
-                if (idx === -1) {
-                  setPlayers([...players, gameEvent.username])
-                }
+                const username = gameEvent.username;
+                setPlayers((prevPlayers) => {
+                  if (!prevPlayers.includes(username)) {
+                    return [...prevPlayers, username];
+                  }
+                  return prevPlayers;
+                });
               }
               break;
             case GameEventType.NEW_QUESTION:
