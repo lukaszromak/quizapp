@@ -152,10 +152,13 @@ public class QuizService {
 
         quiz.setTitle(quizDto.getTitle());
         quiz.setQuestions(mapQuestionDtosToQuestions(quiz, quizDto.getQuestions()));
+        quiz.setId(quizDto.getId());
 
-        for(int i = 0; i < imageIds.length && i < quiz.getQuestions().size(); i++) {
-            if(imageIds[i] == null) continue;
-            quiz.getQuestions().get(i).setImagePath(imageIds[i]);
+        if(imageIds != null) {
+            for(int i = 0; i < imageIds.length && i < quiz.getQuestions().size(); i++) {
+                if(imageIds[i] == null) continue;
+                quiz.getQuestions().get(i).setImagePath(imageIds[i]);
+            }
         }
 
         quiz.setCategories(quizDto.getCategories());

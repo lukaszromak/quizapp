@@ -44,7 +44,6 @@ function QuizResults() {
       <BigTextContainer ref_={divRef}>
         <div>Your score: {location?.state?.results?.correctAnswers}/{location?.state?.results?.totalAnswers}</div>
         <div>{getPercentage() != -1 ? `${getPercentage()}%` : ""}</div>
-        <div>💀</div>
         <div>Answers</div>
         <div>⬇️⬇️⬇️</div>
       </BigTextContainer>

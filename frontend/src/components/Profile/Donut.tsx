@@ -13,14 +13,23 @@ function Donut({ data, colors, width, thickness, hoverSpread }: { data: Map<stri
   const [y1, setY1] = useState(0)
   const [atan2, setAtan2] = useState(0)
 
-  const drawDonut = (ctx: CanvasRenderingContext2D, donutWidth: number, donutCenter: Coords, donutThickness: number, data: Map<string, number>, dataSelected?: number) => {
+  const drawDonut = (
+      ctx: CanvasRenderingContext2D, 
+      donutWidth: number, donutCenter: Coords, 
+      donutThickness: number, 
+      data: Map<string, number>,
+      dataSelected?: number
+    ) => {
     const dataValues = Array.from(data.entries())
     const dataTotal = dataValues.reduce((prev, curr) => prev + curr[1], 0)
     let currentAngle = 0
     let dataPortion
     let currentColor = 0
     
-    const donutRadius = hoverSpread ? (donutWidth / 2) - (donutThickness / 2) - (hoverSpread / 2) : (donutWidth / 2) - (donutThickness / 2)
+    const donutRadius = hoverSpread 
+      ? (donutWidth / 2) - (donutThickness / 2) - (hoverSpread / 2) 
+      : (donutWidth / 2) - (donutThickness / 2)
+      
     ctx.font = "24px sans-serif";
 
     for (let i = 0; i < dataValues.length; i++) {
@@ -43,7 +52,9 @@ function Donut({ data, colors, width, thickness, hoverSpread }: { data: Map<stri
       if(dataSelected == i) {
         ctx.textAlign = "center"
         ctx.fillStyle = "white"
-        ctx.fillText(`${dataValues[i][1].toString()}`, Math.cos(currentAngle + dataPortion / 2) * donutRadius + donutCenter.x, Math.sin(currentAngle + dataPortion / 2) * donutRadius + donutCenter.y)
+        ctx.fillText(`${dataValues[i][1].toString()}`, 
+                      Math.cos(currentAngle + dataPortion / 2) * donutRadius + donutCenter.x, 
+                      Math.sin(currentAngle + dataPortion / 2) * donutRadius + donutCenter.y)
         ctx.fillStyle = colors[currentColor]
         ctx.fillText(dataValues[i][0], donutCenter.x, donutCenter.y)
       }

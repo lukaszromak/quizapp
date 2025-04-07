@@ -43,6 +43,7 @@ interface QuizState {
   quiz: QuizDto,
   isLoading: boolean,
   error: string | null,
+  updated: boolean,
   createdQuizId: number | null
 }
 
@@ -143,7 +144,8 @@ const initialState: QuizState = {
   quiz: initQuiz(),
   isLoading: false,
   error: null,
-  createdQuizId: null
+  createdQuizId: null,
+  updated: false
 };
 
 export const quizSlice = createSlice({
@@ -249,8 +251,11 @@ export const quizSlice = createSlice({
       const qidx = action.payload.qidx
       const time = parseInt(action.payload.time)
 
+      if(isNaN(time)) {
+        quiz.questions[action.payload.qidx].timeToAnswer = 0
+      }
 
-      if(!isNaN(time) && quiz.questions[qidx] && time >= 10 && time <= 120) {
+      if(!isNaN(time) && quiz.questions[qidx] && time >= 0 && time <= 120) {
         quiz.questions[action.payload.qidx].timeToAnswer = time
       }
 
@@ -326,6 +331,15 @@ export const quizSlice = createSlice({
     })
     .addCase(fetch.fulfilled, (state, action) => {
       state.quiz = action.payload
+    })
+    .addCase(update.pending, (state, action) => {
+      state.updated = false
+    })
+    .addCase(update.fulfilled, (state, action) => {
+      state.updated = true
+    })
+    .addCase(update.rejected, (state, action) => {
+      state.updated = false
     })
   }
 })

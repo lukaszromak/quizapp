@@ -116,7 +116,7 @@ function SolvedQuizesDashboard() {
   }, [ref])
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 grid grid-cols-1 sm:grid-cols-2">
+    <div className="mx-auto max-w-7xl px-4 py-8 grid grid-cols-1 sm:grid-cols-2 gap-2">
       <div ref={ref}>
         <Typography variant="p">Total solved</Typography>
         <Donut data={solvesByType} colors={colors} width={width} hoverSpread={10}/>

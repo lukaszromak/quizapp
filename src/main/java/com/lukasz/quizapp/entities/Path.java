@@ -55,7 +55,8 @@ public class Path {
     private List<Quiz> quizzes;
 
     @OneToMany(
-            mappedBy = "path"
+            mappedBy = "path",
+            cascade = {CascadeType.REMOVE}
     )
     private List<Assignment> assignments;
 

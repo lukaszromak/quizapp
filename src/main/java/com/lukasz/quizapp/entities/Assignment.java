@@ -32,7 +32,8 @@ public class Assignment {
     private Quiz quiz;
 
     @OneToMany(
-            mappedBy = "assignment"
+            mappedBy = "assignment",
+            cascade = {CascadeType.REMOVE}
     )
     private List<Solve> solves;
 

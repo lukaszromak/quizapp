@@ -132,4 +132,8 @@ public class PathService {
                 quizzesDto,
                 path.getAssignments().stream().map(assignment -> mapAssignmentToAssignmentDto(assignment, false)).collect(Collectors.toList()));
     }
+
+    public void delete(Long id) {
+        pathRepository.deleteById(id);
+    }
 }

@@ -77,7 +77,7 @@ function QuizList({ source, crud }: { source?: string, crud: boolean }) {
                 {crud &&
                   <span>
                     <Link to="/quiz/updateQuiz"  state={{ quizId: quiz.id }}>
-                      xd {quiz.id}
+                      <Button color="blue">EDIT</Button>
                     </Link>
                     <Button
                       color="red"

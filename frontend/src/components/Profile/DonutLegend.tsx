@@ -2,7 +2,7 @@ function DonutLegend({ data, colors }: { data: Map<string, number>, colors: Arra
   let currentColor = -1
   
   return (
-    <div className="text-right">
+    <div className={"text-right border-2 border-gray-500 border-dashed p-2"}>
       {Array.from(data.entries()).map((entry) => {
         console.log(entry)
         currentColor = (currentColor + 1) % colors.length

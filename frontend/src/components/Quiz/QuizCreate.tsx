@@ -8,6 +8,7 @@ import { fetchQuizCategory } from "features/quizCategorySlice";
 import Button from "components/Misc/Button";
 import ErrorMessage from "components/Misc/ErrorMessage";
 import { genericContainerStyle, genericTextInputStyle } from "components/Misc/Styles";
+import SuccessMessage from "components/Misc/SuccessMessage";
 
 const categoriesColors = [
   'bg-violet-700',
@@ -33,6 +34,7 @@ function CreateQuiz() {
   const dispatch = useAppDispatch();
   const location = useLocation()
   const quizId = location?.state?.quizId
+  const quizUpdated = useAppSelector(state => state.createQuiz.updated) 
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -170,8 +172,10 @@ function CreateQuiz() {
               id={`time-to-answer-${qidx}`}
               type="number"
               onChange={(e) => dispatch(handleTimeToAnswerInput({ qidx: qidx, time: e.currentTarget.value }))}
-              value={quiz.questions[qidx].timeToAnswer}
-              placeholder=" 10" />
+              value={quiz.questions[qidx].timeToAnswer == 0 ? "" : quiz.questions[qidx].timeToAnswer}
+              placeholder=" 10"
+              min={0}
+              max={120}/>
           </div>
         </div>
       ))}
@@ -188,6 +192,7 @@ function CreateQuiz() {
       </div>
       {hasValidationErrors ? <ErrorMessage>Please fill out required fields.</ErrorMessage> : ""}
       {error && <ErrorMessage>{error}</ErrorMessage>}
+      {quizUpdated && <SuccessMessage>Quiz updated.</SuccessMessage>}
       <Button onClick={() => handleSubmit()} color="blue">{quizId ? "Save" : "Submit"}</Button>
     </div>
   )

@@ -59,4 +59,11 @@ public class PathController {
         return ResponseEntity.ok(path.getQuizzes());
     }
 
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+    public ResponseEntity<String> deletePath(@PathVariable Long id) {
+        pathService.delete(id);
+
+        return ResponseEntity.ok(String.format("Path with id %d successfully deleted.", id));
+    }
 }
