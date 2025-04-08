@@ -138,10 +138,12 @@ function PathDetails() {
               <Button color="red" onClick={() => deleteAssignment(assignment.id)}>Delete</Button>
             </div>
           ))}
+          <hr className="my-3"></hr>
           {
             authUser?.roles && (authUser.roles.includes("ROLE_MODERATOR") || authUser.roles.includes("ROLE_ADMIN")) &&
             <>
               <AddStudent path={path} setPath={setPath}></AddStudent>
+              <hr className="my-3"></hr>
               <Typography variant="h3">Quizzes</Typography>
               {path.quizzes.map(quiz => (
                 <div key={quiz.id} className="mb-2 border-2 border-dashed px-8 py-4">

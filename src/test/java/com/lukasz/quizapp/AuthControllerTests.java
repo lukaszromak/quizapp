@@ -33,7 +33,7 @@ public class AuthControllerTests {
     @Test
     void whenValidSignupRequestThenReturnSuccessMessage() throws Exception {
         SignupRequest signupRequest = new SignupRequest();
-        signupRequest.setUsername("test1");
+        signupRequest.setUsername("Aaaa123456");
         signupRequest.setEmail("test1@gmail.com");
         signupRequest.setPassword("test123");
 
@@ -50,8 +50,8 @@ public class AuthControllerTests {
     @Test
     void givenValidCredentialsWhenValidLoginRequestThenReturnJwtResponse() throws Exception {
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setUsername("testuser");
-        loginRequest.setPassword("123");
+        loginRequest.setEmail("testuser@gmail.com");
+        loginRequest.setPassword("123123");
 
         String loginRequestJson = objectMapper.writeValueAsString(loginRequest);
 
@@ -70,7 +70,7 @@ public class AuthControllerTests {
     @Test
     void givenInvalidCredentialsWhenValidLoginRequestThenStatus401() throws Exception {
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setUsername("someinvaliduname112");
+        loginRequest.setEmail("someinvaliduname112");
         loginRequest.setPassword("a123456");
 
         String loginRequestJson = objectMapper.writeValueAsString(loginRequest);
