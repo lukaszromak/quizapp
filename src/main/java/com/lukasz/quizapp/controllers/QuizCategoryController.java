@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/quizCategory")
+@RequestMapping("/api/quizCategory")
 public class QuizCategoryController {
 
     private final QuizCategoryRepository quizCategoryRepository;

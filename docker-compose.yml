@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: quizapp
+      POSTGRES_PASSWORD: gqJ:A1£8a^VI9C!zBu£HT[x7{a%vR#,}
+      POSTGRES_DB: quizapp
+    ports:
+      - "5432:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  quizapp:
+    depends_on:
+      - postgres
+    build: .
+    restart: on-failure
+    ports:
+      - "80:8080"
+    environment:
+      PROFILE: prod
+      SPRING_APPLICATION_JSON: '{
+        "spring.datasource.url"  : "jdbc:postgresql://postgres:5432/quizapp",
+        "spring.datasource.username" : "quizapp",
+        "spring.datasource.password" : "gqJ:A1£8a^VI9C!zBu£HT[x7{a%vR#,}"
+      }'
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true
+
+
+volumes:
+  db:

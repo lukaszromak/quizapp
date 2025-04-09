@@ -19,7 +19,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/path")
+@RequestMapping("/api/path")
 public class PathController {
 
     private final PathService pathService;

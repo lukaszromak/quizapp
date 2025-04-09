@@ -1,5 +1,6 @@
 package com.lukasz.quizapp.security;
 
+import com.lukasz.quizapp.configuration.SpaWebFilter;
 import com.lukasz.quizapp.security.jwt.AuthEntryPointJwt;
 import com.lukasz.quizapp.security.jwt.AuthTokenFilter;
 import com.lukasz.quizapp.security.services.UserDetailsServiceImpl;
@@ -17,13 +18,16 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 
 @Configuration
 @EnableMethodSecurity
 public class WebSecurityConfig {
+
+    public static final String contextPath = "/api";
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
@@ -61,16 +65,18 @@ public class WebSecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/auth/**").permitAll()
-                                .requestMatchers("/test/**").permitAll()
-                                .requestMatchers("/swagger-ui/**").permitAll()
-                                .requestMatchers("/v3/api-docs/**").permitAll()
-                                .requestMatchers("/error").permitAll()
+                        auth.requestMatchers(contextPath + "/auth/**").permitAll()
+                                .requestMatchers(contextPath +"/test/**").permitAll()
+                                .requestMatchers(contextPath +"/swagger-ui/**").permitAll()
+                                .requestMatchers(contextPath +"/v3/api-docs/**").permitAll()
+                                .requestMatchers(contextPath +"/error").permitAll()
                                 //FRONTEND TODO
 //                                .requestMatchers(HttpMethod.GET, "/quiz/**").permitAll()
 //                                .requestMatchers(HttpMethod.POST, "/quiz/**").authenticated()
-                                .requestMatchers("/quizCategory/**").permitAll()
-                                .requestMatchers("/quiz/images/**").permitAll()
+                                .requestMatchers(contextPath +"/quizCategory/**").permitAll()
+                                .requestMatchers(contextPath +"/quiz/images/**").permitAll()
+                                .requestMatchers("/", "/index.html", "/static/**",
+                                        "/*.ico", "/*.json", "/*.png", "/images/**").permitAll()
                                 .anyRequest().authenticated()
                 );
         http.cors(Customizer.withDefaults());
@@ -78,6 +84,7 @@ public class WebSecurityConfig {
         http.authenticationProvider(authenticationProvider());
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAfter(new SpaWebFilter(), AuthTokenFilter.class);
 
         return http.build();
     }

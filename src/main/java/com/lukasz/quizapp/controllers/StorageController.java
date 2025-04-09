@@ -16,7 +16,7 @@ public class StorageController {
         this.storageService = storageService;
     }
 
-    @GetMapping(value = "/quiz/images/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/api/quiz/images/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public @ResponseBody byte[] readQuizImage(@PathVariable String id) {
         return storageService.read(String.format("/quiz/images/%s", id));
     }

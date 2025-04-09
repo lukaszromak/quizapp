@@ -38,7 +38,7 @@ public class GameController {
     }
 
     @GetMapping
-    @RequestMapping("/game/create/{quizId}")
+    @RequestMapping("/api/game/create/{quizId}")
     public ResponseEntity<Game> createGame(@PathVariable Long quizId, @RequestParam(required = false) Long assignmentId) {
         User user = authService.getAuthenticatedUser();
 
@@ -50,7 +50,7 @@ public class GameController {
     }
 
     @GetMapping
-    @RequestMapping("/game/currentGame")
+    @RequestMapping("/api/game/currentGame")
     public ResponseEntity<Game> currentGame() {
         User user = authService.getAuthenticatedUser();
 
@@ -58,7 +58,7 @@ public class GameController {
     }
 
     @GetMapping
-    @RequestMapping("/game/hostedGame")
+    @RequestMapping("/api/game/hostedGame")
     public ResponseEntity<Game> hostedGame() {
         User user = authService.getAuthenticatedUser();
 

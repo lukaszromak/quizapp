@@ -22,7 +22,7 @@ import static com.lukasz.quizapp.services.PathService.mapPathsListToPathDtoList;
 import static com.lukasz.quizapp.services.SolveService.mapSolveListToSolveDtoList;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
     private QuizService quizService;
     private AuthService authService;

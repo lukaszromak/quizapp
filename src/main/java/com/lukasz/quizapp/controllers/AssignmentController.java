@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import static com.lukasz.quizapp.services.AssignmentService.mapAssignmentToAssignmentDto;
 
 @RestController
-@RequestMapping("/assignment")
+@RequestMapping("/api/assignment")
 public class AssignmentController {
 
     private final AssignmentService assignmentService;

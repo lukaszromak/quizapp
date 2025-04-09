@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @RestController
-@RequestMapping("/auth/test")
+@RequestMapping("/api/auth/test")
 public class AuthTestController {
 
     @GetMapping("/all")
