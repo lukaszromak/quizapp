@@ -33,7 +33,7 @@ public class AuthControllerTests {
     @Test
     void whenValidSignupRequestThenReturnSuccessMessage() throws Exception {
         SignupRequest signupRequest = new SignupRequest();
-        signupRequest.setUsername("test1");
+        signupRequest.setUsername("Aaaa123456");
         signupRequest.setEmail("test1@gmail.com");
         signupRequest.setPassword("test123");
 

@@ -5,6 +5,7 @@ import com.lukasz.quizapp.entities.Assignment;
 import com.lukasz.quizapp.entities.Path;
 import com.lukasz.quizapp.entities.Quiz;
 import com.lukasz.quizapp.exception.PathNotFoundException;
+import com.lukasz.quizapp.services.AssignmentService;
 import com.lukasz.quizapp.services.PathService;
 import com.lukasz.quizapp.services.QuizService;
 import jakarta.transaction.Transactional;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -26,10 +28,13 @@ public class PathController {
 
     private final QuizService quizService;
 
+    private final AssignmentService assignmentService;
+
     @Autowired
-    public PathController(PathService pathService, QuizService quizService) {
+    public PathController(PathService pathService, QuizService quizService, AssignmentService assignmentService) {
         this.pathService = pathService;
         this.quizService = quizService;
+        this.assignmentService = assignmentService;
     }
 
     @GetMapping("/{id}")
@@ -87,7 +92,16 @@ public class PathController {
     @DeleteMapping("/{id}/assignments/{assignmentId}")
     public ResponseEntity<String> deleteAssignment(@PathVariable Long id, @PathVariable Long assignmentId) throws PathNotFoundException {
         Path path = pathService.read(id);
-        path.setAssignments(path.getAssignments().stream().filter(assignment -> !Objects.equals(assignment.getId(), assignmentId)).collect(Collectors.toList()));
+        Optional<Assignment> assignmentOptional = path.getAssignments().stream().filter(assignment -> Objects.equals(assignment.getId(), assignmentId)).findFirst();
+
+        if(assignmentOptional.isEmpty()) {
+            throw new RuntimeException("Assignment not found.");
+        }
+
+        Assignment assignment = assignmentOptional.get();
+        assignment.setPath(null);
+        assignmentService.save(assignment);
+        path.setAssignments(path.getAssignments().stream().filter(a -> !Objects.equals(a.getId(), assignmentId)).collect(Collectors.toList()));
         pathService.save(path);
 
         return ResponseEntity.ok(String.format("Assignment with id %d successfully deleted", assignmentId));

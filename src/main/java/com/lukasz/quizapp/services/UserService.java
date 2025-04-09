@@ -95,7 +95,7 @@ public class UserService {
     }
 
     public Page<User> readAll(Integer page, String searchText) {
-        PageRequest pageable = PageRequest.of(page, 20);
+        PageRequest pageable = PageRequest.of(page, 1);
 
         if(searchText != null && !searchText.equals("")) {
             return userRepository.findAllByUsernameContainingOrEmailContaining(searchText, searchText, pageable);
